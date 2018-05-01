@@ -1,6 +1,6 @@
 {
   "name": "artistan/revive-xmlrpc",
-  "description": "copy of the library classes to provide XmlRpc routines on revive ad server",
+  "description": "package of the library classes to provide XmlRpc routines for accessing revive ad servers",
   "homepage": "https://github.com/Artistan/revive-xmlrpc",
   "type": "library",
   "require": {
@@ -15,10 +15,6 @@
   ],
   "license": "GNU GENERAL PUBLIC LICENSE",
   "authors": [
-    {
-      "name": "Revive Software and Services BV",
-      "email": "admin@revive-sas.com"
-    },
     {
       "name": "Charles Peterson",
       "email": "artistan@gmail.com"
