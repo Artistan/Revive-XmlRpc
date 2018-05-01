@@ -24,21 +24,29 @@ use PhpXmlRpc\Request;
  * @subpackage ExternalLibrary
  * @author     Chris Nutting <Chris.Nutting@openx.org>
  */
-
 class OpenAdsV2ApiXmlRpc
 {
     var $host;
+
     var $basepath;
+
     var $port;
+
     var $timeout;
+
     var $username;
+
     var $password;
+
+    var $ssl;
+
     /**
      * The sessionId is set by the logon() method called during the constructor.
      *
      * @var string The remote session ID is used in all subsequent transactions.
      */
     var $sessionId;
+
     /**
      * Purely for my own use, this parameter lets me pass debug querystring parameters into
      * the remote call to trigger my Zend debugger on the server-side
@@ -53,23 +61,24 @@ class OpenAdsV2ApiXmlRpc
     /**
      * PHP4 style constructor
      *
-     * @param string $host      The name of the host to which to connect.
-     * @param string $basepath  The base path to XML-RPC services.
-     * @param string $username  The username to authenticate to the web services API.
-     * @param string $password  The password for this user.
-     * @param int    $port      The port number. Use 0 to use standard ports which
+     * @param string $host The name of the host to which to connect.
+     * @param string $basepath The base path to XML-RPC services.
+     * @param string $username The username to authenticate to the web services API.
+     * @param string $password The password for this user.
+     * @param int $port The port number. Use 0 to use standard ports which
      *                          are port 80 for HTTP and port 443 for HTTPS.
-     * @param bool   $ssl       Set to true to connect using an SSL connection.
-     * @param int    $timeout   The timeout period to wait for a response.
+     * @param bool $ssl Set to true to connect using an SSL connection.
+     * @param int $timeout The timeout period to wait for a response.
      */
     function __construct($host, $basepath, $username, $password, $port = 0, $ssl = false, $timeout = 15)
     {
-        $this->host = ($ssl ? 'https://' : 'http://').$host;
+        $this->host = $host;
         $this->basepath = rtrim($basepath, '/');
         $this->port = $port;
         $this->timeout = $timeout;
         $this->username = $username;
         $this->password = $password;
+        $this->ssl = $ssl;
         $this->_logon();
     }
 
@@ -80,7 +89,9 @@ class OpenAdsV2ApiXmlRpc
      */
     function &_getClient()
     {
-        $oClient = new Client($this->basepath . '/' . $this->debug, $this->host, $this->port);
+        $oClient = new Client($this->basepath.'/'.$this->debug, $this->host, $this->port,
+            $this->ssl ? 'https' : 'http');
+
         return $oClient;
     }
 
@@ -88,25 +99,25 @@ class OpenAdsV2ApiXmlRpc
      * This private function sends a method call and $data to a specified service and automatically
      * adds the value of the sessionID.
      *
-     * @param string $method  The name of the remote method to call.
-     * @param mixed  $data    The data to send to the web service.
+     * @param string $method The name of the remote method to call.
+     * @param mixed $data The data to send to the web service.
      * @return mixed The response from the server or false in the event of failure.
      */
-    function _sendWithSession($method, $data = array())
+    function _sendWithSession($method, $data = [])
     {
-        return $this->_send($method, array_merge(array($this->sessionId), $data));
+        return $this->_send($method, array_merge([$this->sessionId], $data));
     }
 
     /**
      * This function sends a method call to a specified service.
      *
-     * @param string $method  The name of the remote method to call.
-     * @param mixed  $data    The data to send to the web service.
+     * @param string $method The name of the remote method to call.
+     * @param mixed $data The data to send to the web service.
      * @return mixed The response from the server or false in the event of failure.
      */
     function _send($method, $data)
     {
-        $dataMessage = array();
+        $dataMessage = [];
         $encoder = new Encoder();
         $result = false;
         foreach ($data as $element) {
@@ -127,9 +138,10 @@ class OpenAdsV2ApiXmlRpc
         if ($response && $response->faultCode() == 0) {
             $result = $encoder->decode($response->value());
         } else {
-            trigger_error('XML-RPC Error (' . $response->faultCode() . '): ' . $response->faultString() .
-                ' in method ' . $method . '()', E_USER_ERROR);
+            trigger_error('XML-RPC Error ('.$response->faultCode().'): '.$response->faultString().' in method '.$method.'()',
+                E_USER_ERROR);
         }
+
         return $result;
     }
 
@@ -140,7 +152,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function _logon()
     {
-        $this->sessionId = $this->_send('ox.logon', array($this->username, $this->password));
+        $this->sessionId = $this->_send('ox.logon', [$this->username, $this->password]);
+
         return true;
     }
 
@@ -151,22 +164,27 @@ class OpenAdsV2ApiXmlRpc
      */
     function logoff()
     {
-        return (bool) $this->_sendWithSession('ox.logoff');
+        return (bool)$this->_sendWithSession('ox.logoff');
     }
 
     /**
      * This method returns statistics for an entity.
      *
-     * @param string  $methodName
-     * @param int  $entityId
-     * @param \Carbon\Carbon  $oStartDate
-     * @param \Carbon\Carbon  $oEndDate
+     * @param string $methodName
+     * @param int $entityId
+     * @param \Carbon\Carbon $oStartDate
+     * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
      */
-    function _callStatisticsMethod($methodName, $entityId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
-    {
-        $dataArray = array((int) $entityId);
+    function _callStatisticsMethod(
+        $methodName,
+        $entityId,
+        $oStartDate = null,
+        $oEndDate = null,
+        $useManagerTimezone = false
+    ) {
+        $dataArray = [(int)$entityId];
         if (is_object($oStartDate)) {
             $dataArray[] = $oStartDate->format('%Y%m%dT%H:%M:%S');
 
@@ -175,7 +193,7 @@ class OpenAdsV2ApiXmlRpc
             }
         }
 
-        $dataArray[] = (bool) $useManagerTimezone;
+        $dataArray[] = (bool)$useManagerTimezone;
         $statisticsData = $this->_sendWithSession($methodName, $dataArray);
 
         return $statisticsData;
@@ -190,7 +208,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function addAgency(&$oAgencyInfo)
     {
-        return (int) $this->_sendWithSession('ox.addAgency', array(&$oAgencyInfo));
+        return (int)$this->_sendWithSession('ox.addAgency', [&$oAgencyInfo]);
     }
 
     /**
@@ -202,7 +220,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function modifyAgency(&$oAgencyInfo)
     {
-        return (bool) $this->_sendWithSession('ox.modifyAgency', array(&$oAgencyInfo));
+        return (bool)$this->_sendWithSession('ox.modifyAgency', [&$oAgencyInfo]);
     }
 
     /**
@@ -213,7 +231,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function getAgency($agencyId)
     {
-        $dataAgency = $this->_sendWithSession('ox.getAgency', array((int) $agencyId));
+        $dataAgency = $this->_sendWithSession('ox.getAgency', [(int)$agencyId]);
         $oAgencyInfo = new OA_Dll_AgencyInfo();
         $oAgencyInfo->readDataFromArray($dataAgency);
 
@@ -228,7 +246,7 @@ class OpenAdsV2ApiXmlRpc
     function getAgencyList()
     {
         $dataAgencyList = $this->_sendWithSession('ox.getAgencyList');
-        $returnData = array();
+        $returnData = [];
         foreach ($dataAgencyList as $dataAgency) {
             $oAgencyInfo = new OA_Dll_AgencyInfo();
             $oAgencyInfo->readDataFromArray($dataAgency);
@@ -246,7 +264,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function deleteAgency($agencyId)
     {
-        return (bool) $this->_sendWithSession('ox.deleteAgency', array((int) $agencyId));
+        return (bool)$this->_sendWithSession('ox.deleteAgency', [(int)$agencyId]);
     }
 
     /**
@@ -260,7 +278,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function agencyDailyStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        $statisticsData = $this->_callStatisticsMethod('ox.agencyDailyStatistics', $agencyId, $oStartDate, $oEndDate, $useManagerTimezone);
+        $statisticsData = $this->_callStatisticsMethod('ox.agencyDailyStatistics', $agencyId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
 
         foreach ($statisticsData as $key => $data) {
             $statisticsData[$key]['day'] = \Carbon\Carbon::parse($data['day'])->format('Y-m-d');
@@ -280,7 +299,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function agencyAdvertiserStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.agencyAdvertiserStatistics', $agencyId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.agencyAdvertiserStatistics', $agencyId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -294,7 +314,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function agencyCampaignStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.agencyCampaignStatistics', $agencyId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.agencyCampaignStatistics', $agencyId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -308,7 +329,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function agencyBannerStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.agencyBannerStatistics', $agencyId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.agencyBannerStatistics', $agencyId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -322,7 +344,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function agencyPublisherStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.agencyPublisherStatistics', $agencyId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.agencyPublisherStatistics', $agencyId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -336,7 +359,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function agencyZoneStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.agencyZoneStatistics', $agencyId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.agencyZoneStatistics', $agencyId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -348,7 +372,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function addAdvertiser(&$oAdvertiserInfo)
     {
-        return (int) $this->_sendWithSession('ox.addAdvertiser', array(&$oAdvertiserInfo));
+        return (int)$this->_sendWithSession('ox.addAdvertiser', [&$oAdvertiserInfo]);
     }
 
     /**
@@ -360,7 +384,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function modifyAdvertiser(&$oAdvertiserInfo)
     {
-        return (bool) $this->_sendWithSession('ox.modifyAdvertiser', array(&$oAdvertiserInfo));
+        return (bool)$this->_sendWithSession('ox.modifyAdvertiser', [&$oAdvertiserInfo]);
     }
 
     /**
@@ -372,7 +396,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function getAdvertiser($advertiserId)
     {
-        $dataAdvertiser = $this->_sendWithSession('ox.getAdvertiser', array((int) $advertiserId));
+        $dataAdvertiser = $this->_sendWithSession('ox.getAdvertiser', [(int)$advertiserId]);
         $oAdvertiserInfo = new OA_Dll_AdvertiserInfo();
         $oAdvertiserInfo->readDataFromArray($dataAdvertiser);
 
@@ -388,8 +412,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function getAdvertiserListByAgencyId($agencyId)
     {
-        $dataAdvertiserList = $this->_sendWithSession('ox.getAdvertiserListByAgencyId', array((int) $agencyId));
-        $returnData = array();
+        $dataAdvertiserList = $this->_sendWithSession('ox.getAdvertiserListByAgencyId', [(int)$agencyId]);
+        $returnData = [];
         foreach ($dataAdvertiserList as $dataAdvertiser) {
             $oAdvertiserInfo = new OA_Dll_AdvertiserInfo();
             $oAdvertiserInfo->readDataFromArray($dataAdvertiser);
@@ -407,7 +431,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function deleteAdvertiser($advertiserId)
     {
-        return (bool) $this->_sendWithSession('ox.deleteAdvertiser', array((int) $advertiserId));
+        return (bool)$this->_sendWithSession('ox.deleteAdvertiser', [(int)$advertiserId]);
     }
 
     /**
@@ -421,7 +445,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function advertiserDailyStatistics($advertiserId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        $statisticsData = $this->_callStatisticsMethod('ox.advertiserDailyStatistics', $advertiserId, $oStartDate, $oEndDate, $useManagerTimezone);
+        $statisticsData = $this->_callStatisticsMethod('ox.advertiserDailyStatistics', $advertiserId, $oStartDate,
+            $oEndDate, $useManagerTimezone);
 
         foreach ($statisticsData as $key => $data) {
             $statisticsData[$key]['day'] = \Carbon\Carbon::parse($data['day'])->format('Y-m-d');
@@ -439,9 +464,14 @@ class OpenAdsV2ApiXmlRpc
      * @param boolean $useManagerTimezone
      * @return array  result data
      */
-    function advertiserCampaignStatistics($advertiserId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
-    {
-        return $this->_callStatisticsMethod('ox.advertiserCampaignStatistics', $advertiserId, $oStartDate, $oEndDate, $useManagerTimezone);
+    function advertiserCampaignStatistics(
+        $advertiserId,
+        $oStartDate = null,
+        $oEndDate = null,
+        $useManagerTimezone = false
+    ) {
+        return $this->_callStatisticsMethod('ox.advertiserCampaignStatistics', $advertiserId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -453,9 +483,14 @@ class OpenAdsV2ApiXmlRpc
      * @param boolean $useManagerTimezone
      * @return array  result data
      */
-    function advertiserBannerStatistics($advertiserId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
-    {
-        return $this->_callStatisticsMethod('ox.advertiserBannerStatistics', $advertiserId, $oStartDate, $oEndDate, $useManagerTimezone);
+    function advertiserBannerStatistics(
+        $advertiserId,
+        $oStartDate = null,
+        $oEndDate = null,
+        $useManagerTimezone = false
+    ) {
+        return $this->_callStatisticsMethod('ox.advertiserBannerStatistics', $advertiserId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -467,9 +502,14 @@ class OpenAdsV2ApiXmlRpc
      * @param boolean $useManagerTimezone
      * @return array  result data
      */
-    function advertiserPublisherStatistics($advertiserId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
-    {
-        return $this->_callStatisticsMethod('ox.advertiserPublisherStatistics', $advertiserId, $oStartDate, $oEndDate, $useManagerTimezone);
+    function advertiserPublisherStatistics(
+        $advertiserId,
+        $oStartDate = null,
+        $oEndDate = null,
+        $useManagerTimezone = false
+    ) {
+        return $this->_callStatisticsMethod('ox.advertiserPublisherStatistics', $advertiserId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -483,7 +523,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function advertiserZoneStatistics($advertiserId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.advertiserZoneStatistics', $advertiserId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.advertiserZoneStatistics', $advertiserId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -495,7 +536,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function addCampaign(&$oCampaignInfo)
     {
-        return (int) $this->_sendWithSession('ox.addCampaign', array(&$oCampaignInfo));
+        return (int)$this->_sendWithSession('ox.addCampaign', [&$oCampaignInfo]);
     }
 
     /**
@@ -507,7 +548,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function modifyCampaign(&$oCampaignInfo)
     {
-        return (bool) $this->_sendWithSession('ox.modifyCampaign', array(&$oCampaignInfo));
+        return (bool)$this->_sendWithSession('ox.modifyCampaign', [&$oCampaignInfo]);
     }
 
     /**
@@ -519,7 +560,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function getCampaign($campaignId)
     {
-        $dataCampaign = $this->_sendWithSession('ox.getCampaign', array((int) $campaignId));
+        $dataCampaign = $this->_sendWithSession('ox.getCampaign', [(int)$campaignId]);
         $oCampaignInfo = new OA_Dll_CampaignInfo();
         $oCampaignInfo->readDataFromArray($dataCampaign);
 
@@ -535,13 +576,14 @@ class OpenAdsV2ApiXmlRpc
      */
     function getCampaignListByAdvertiserId($advertiserId)
     {
-        $dataCampaignList = $this->_sendWithSession('ox.getCampaignListByAdvertiserId', array((int) $advertiserId));
-        $returnData = array();
+        $dataCampaignList = $this->_sendWithSession('ox.getCampaignListByAdvertiserId', [(int)$advertiserId]);
+        $returnData = [];
         foreach ($dataCampaignList as $dataCampaign) {
             $oCampaignInfo = new OA_Dll_CampaignInfo();
             $oCampaignInfo->readDataFromArray($dataCampaign);
             $returnData[] = $oCampaignInfo;
         }
+
         return $returnData;
     }
 
@@ -553,7 +595,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function deleteCampaign($campaignId)
     {
-        return (bool) $this->_sendWithSession('ox.deleteCampaign', array((int) $campaignId));
+        return (bool)$this->_sendWithSession('ox.deleteCampaign', [(int)$campaignId]);
     }
 
     /**
@@ -567,7 +609,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function campaignDailyStatistics($campaignId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        $statisticsData = $this->_callStatisticsMethod('ox.campaignDailyStatistics', $campaignId, $oStartDate, $oEndDate, $useManagerTimezone);
+        $statisticsData = $this->_callStatisticsMethod('ox.campaignDailyStatistics', $campaignId, $oStartDate,
+            $oEndDate, $useManagerTimezone);
 
         foreach ($statisticsData as $key => $data) {
             $statisticsData[$key]['day'] = \Carbon\Carbon::parse($data['day'])->format('Y-m-d');
@@ -587,7 +630,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function campaignBannerStatistics($campaignId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.campaignBannerStatistics', $campaignId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.campaignBannerStatistics', $campaignId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -601,7 +645,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function campaignPublisherStatistics($campaignId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.campaignPublisherStatistics', $campaignId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.campaignPublisherStatistics', $campaignId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -615,7 +660,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function campaignZoneStatistics($campaignId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.campaignZoneStatistics', $campaignId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.campaignZoneStatistics', $campaignId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -627,7 +673,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function addBanner(&$oBannerInfo)
     {
-        return (int) $this->_sendWithSession('ox.addBanner', array(&$oBannerInfo));
+        return (int)$this->_sendWithSession('ox.addBanner', [&$oBannerInfo]);
     }
 
     /**
@@ -639,7 +685,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function modifyBanner(&$oBannerInfo)
     {
-        return (bool) $this->_sendWithSession('ox.modifyBanner', array(&$oBannerInfo));
+        return (bool)$this->_sendWithSession('ox.modifyBanner', [&$oBannerInfo]);
     }
 
     /**
@@ -651,7 +697,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function getBanner($bannerId)
     {
-        $dataBanner = $this->_sendWithSession('ox.getBanner', array((int) $bannerId));
+        $dataBanner = $this->_sendWithSession('ox.getBanner', [(int)$bannerId]);
         $oBannerInfo = new OA_Dll_BannerInfo();
         $oBannerInfo->readDataFromArray($dataBanner);
 
@@ -667,13 +713,14 @@ class OpenAdsV2ApiXmlRpc
      */
     function getBannerTargeting($bannerId)
     {
-        $dataBannerTargetingList = $this->_sendWithSession('ox.getBannerTargeting', array((int) $bannerId));
-        $returnData = array();
+        $dataBannerTargetingList = $this->_sendWithSession('ox.getBannerTargeting', [(int)$bannerId]);
+        $returnData = [];
         foreach ($dataBannerTargetingList as $dataBannerTargeting) {
             $oBannerTargetingInfo = new OA_Dll_TargetingInfo();
             $oBannerTargetingInfo->readDataFromArray($dataBannerTargeting);
             $returnData[] = $oBannerTargetingInfo;
         }
+
         return $returnData;
     }
 
@@ -688,13 +735,14 @@ class OpenAdsV2ApiXmlRpc
      */
     function setBannerTargeting($bannerId, $aTargeting)
     {
-        $aTargetingInfoObjects = array();
+        $aTargetingInfoObjects = [];
         foreach ($aTargeting as $aTargetingArray) {
             $oTargetingInfo = new OA_Dll_TargetingInfo();
             $oTargetingInfo->readDataFromArray($aTargetingArray);
             $aTargetingInfoObjects[] = $oTargetingInfo;
         }
-        return (bool) $this->_sendWithSession('ox.setBannerTargeting', array((int) $bannerId, $aTargetingInfoObjects));
+
+        return (bool)$this->_sendWithSession('ox.setBannerTargeting', [(int)$bannerId, $aTargetingInfoObjects]);
     }
 
     /**
@@ -706,8 +754,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function getBannerListByCampaignId($campaignId)
     {
-        $dataBannerList = $this->_sendWithSession('ox.getBannerListByCampaignId', array((int) $campaignId));
-        $returnData = array();
+        $dataBannerList = $this->_sendWithSession('ox.getBannerListByCampaignId', [(int)$campaignId]);
+        $returnData = [];
         foreach ($dataBannerList as $dataBanner) {
             $oBannerInfo = new OA_Dll_BannerInfo();
             $oBannerInfo->readDataFromArray($dataBanner);
@@ -725,7 +773,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function deleteBanner($bannerId)
     {
-        return (bool) $this->_sendWithSession('ox.deleteBanner', array((int) $bannerId));
+        return (bool)$this->_sendWithSession('ox.deleteBanner', [(int)$bannerId]);
     }
 
     /**
@@ -739,7 +787,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function bannerDailyStatistics($bannerId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        $statisticsData = $this->_callStatisticsMethod('ox.bannerDailyStatistics', $bannerId, $oStartDate, $oEndDate, $useManagerTimezone);
+        $statisticsData = $this->_callStatisticsMethod('ox.bannerDailyStatistics', $bannerId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
 
         foreach ($statisticsData as $key => $data) {
             $statisticsData[$key]['day'] = \Carbon\Carbon::parse($data['day'])->format('Y-m-d');
@@ -759,8 +808,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function bannerPublisherStatistics($bannerId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.bannerPublisherStatistics', $bannerId, $oStartDate, $oEndDate, $useManagerTimezone);
-
+        return $this->_callStatisticsMethod('ox.bannerPublisherStatistics', $bannerId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -774,8 +823,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function bannerZoneStatistics($bannerId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.bannerZoneStatistics', $bannerId, $oStartDate, $oEndDate, $useManagerTimezone);
-
+        return $this->_callStatisticsMethod('ox.bannerZoneStatistics', $bannerId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -786,7 +835,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function addPublisher(&$oPublisherInfo)
     {
-        return (int) $this->_sendWithSession('ox.addPublisher', array(&$oPublisherInfo));
+        return (int)$this->_sendWithSession('ox.addPublisher', [&$oPublisherInfo]);
     }
 
     /**
@@ -797,7 +846,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function modifyPublisher(&$oPublisherInfo)
     {
-        return (bool) $this->_sendWithSession('ox.modifyPublisher', array(&$oPublisherInfo));
+        return (bool)$this->_sendWithSession('ox.modifyPublisher', [&$oPublisherInfo]);
     }
 
     /**
@@ -808,7 +857,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function getPublisher($publisherId)
     {
-        $dataPublisher = $this->_sendWithSession('ox.getPublisher', array((int) $publisherId));
+        $dataPublisher = $this->_sendWithSession('ox.getPublisher', [(int)$publisherId]);
         $oPublisherInfo = new OA_Dll_PublisherInfo();
         $oPublisherInfo->readDataFromArray($dataPublisher);
 
@@ -823,8 +872,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function getPublisherListByAgencyId($agencyId)
     {
-        $dataPublisherList = $this->_sendWithSession('ox.getPublisherListByAgencyId', array((int) $agencyId));
-        $returnData = array();
+        $dataPublisherList = $this->_sendWithSession('ox.getPublisherListByAgencyId', [(int)$agencyId]);
+        $returnData = [];
         foreach ($dataPublisherList as $dataPublisher) {
             $oPublisherInfo = new OA_Dll_PublisherInfo();
             $oPublisherInfo->readDataFromArray($dataPublisher);
@@ -842,7 +891,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function deletePublisher($publisherId)
     {
-        return (bool) $this->_sendWithSession('ox.deletePublisher', array((int) $publisherId));
+        return (bool)$this->_sendWithSession('ox.deletePublisher', [(int)$publisherId]);
     }
 
     /**
@@ -856,7 +905,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function publisherDailyStatistics($publisherId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        $statisticsData = $this->_callStatisticsMethod('ox.publisherDailyStatistics', $publisherId, $oStartDate, $oEndDate, $useManagerTimezone);
+        $statisticsData = $this->_callStatisticsMethod('ox.publisherDailyStatistics', $publisherId, $oStartDate,
+            $oEndDate, $useManagerTimezone);
 
         foreach ($statisticsData as $key => $data) {
             $statisticsData[$key]['day'] = \Carbon\Carbon::parse($data['day'])->format('Y-m-d');
@@ -876,7 +926,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function publisherZoneStatistics($publisherId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.publisherZoneStatistics', $publisherId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.publisherZoneStatistics', $publisherId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -888,9 +939,14 @@ class OpenAdsV2ApiXmlRpc
      * @param boolean $useManagerTimezone
      * @return array  result data
      */
-    function publisherAdvertiserStatistics($publisherId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
-    {
-        return $this->_callStatisticsMethod('ox.publisherAdvertiserStatistics', $publisherId, $oStartDate, $oEndDate, $useManagerTimezone);
+    function publisherAdvertiserStatistics(
+        $publisherId,
+        $oStartDate = null,
+        $oEndDate = null,
+        $useManagerTimezone = false
+    ) {
+        return $this->_callStatisticsMethod('ox.publisherAdvertiserStatistics', $publisherId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -902,9 +958,14 @@ class OpenAdsV2ApiXmlRpc
      * @param boolean $useManagerTimezone
      * @return array  result data
      */
-    function publisherCampaignStatistics($publisherId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
-    {
-        return $this->_callStatisticsMethod('ox.publisherCampaignStatistics', $publisherId, $oStartDate, $oEndDate, $useManagerTimezone);
+    function publisherCampaignStatistics(
+        $publisherId,
+        $oStartDate = null,
+        $oEndDate = null,
+        $useManagerTimezone = false
+    ) {
+        return $this->_callStatisticsMethod('ox.publisherCampaignStatistics', $publisherId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -918,7 +979,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function publisherBannerStatistics($publisherId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.publisherBannerStatistics', $publisherId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.publisherBannerStatistics', $publisherId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -929,7 +991,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function addUser(&$oUserInfo)
     {
-        return (int) $this->_sendWithSession('ox.addUser', array(&$oUserInfo));
+        return (int)$this->_sendWithSession('ox.addUser', [&$oUserInfo]);
     }
 
     /**
@@ -940,7 +1002,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function modifyUser(&$oUserInfo)
     {
-        return (bool) $this->_sendWithSession('ox.modifyUser', array(&$oUserInfo));
+        return (bool)$this->_sendWithSession('ox.modifyUser', [&$oUserInfo]);
     }
 
     /**
@@ -951,7 +1013,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function getUser($userId)
     {
-        $dataUser = $this->_sendWithSession('ox.getUser', array((int) $userId));
+        $dataUser = $this->_sendWithSession('ox.getUser', [(int)$userId]);
         $oUserInfo = new OA_Dll_UserInfo();
         $oUserInfo->readDataFromArray($dataUser);
 
@@ -967,8 +1029,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function getUserListByAccountId($accountId)
     {
-        $dataUserList = $this->_sendWithSession('ox.getUserListByAccountId', array((int) $accountId));
-        $returnData = array();
+        $dataUserList = $this->_sendWithSession('ox.getUserListByAccountId', [(int)$accountId]);
+        $returnData = [];
         foreach ($dataUserList as $dataUser) {
             $oUserInfo = new OA_Dll_UserInfo();
             $oUserInfo->readDataFromArray($dataUser);
@@ -987,7 +1049,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function updateSsoUserId($oldSsoUserId, $newSsoUserId)
     {
-        return (bool) $this->_sendWithSession('ox.updateSsoUserId', array((int)$oldSsoUserId, (int)$newSsoUserId));
+        return (bool)$this->_sendWithSession('ox.updateSsoUserId', [(int)$oldSsoUserId, (int)$newSsoUserId]);
     }
 
     /**
@@ -999,7 +1061,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function updateUserEmailBySsoId($ssoUserId, $email)
     {
-        return (bool) $this->_sendWithSession('ox.updateUserEmailBySsoId', array((int)$ssoUserId, $email));
+        return (bool)$this->_sendWithSession('ox.updateUserEmailBySsoId', [(int)$ssoUserId, $email]);
     }
 
     /**
@@ -1010,7 +1072,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function deleteUser($userId)
     {
-        return (bool) $this->_sendWithSession('ox.deleteUser', array((int) $userId));
+        return (bool)$this->_sendWithSession('ox.deleteUser', [(int)$userId]);
     }
 
     /**
@@ -1021,7 +1083,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function addZone(&$oZoneInfo)
     {
-        return (int) $this->_sendWithSession('ox.addZone', array(&$oZoneInfo));
+        return (int)$this->_sendWithSession('ox.addZone', [&$oZoneInfo]);
     }
 
     /**
@@ -1032,7 +1094,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function modifyZone(&$oZoneInfo)
     {
-        return (bool) $this->_sendWithSession('ox.modifyZone', array(&$oZoneInfo));
+        return (bool)$this->_sendWithSession('ox.modifyZone', [&$oZoneInfo]);
     }
 
     /**
@@ -1043,7 +1105,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function getZone($zoneId)
     {
-        $dataZone = $this->_sendWithSession('ox.getZone', array((int) $zoneId));
+        $dataZone = $this->_sendWithSession('ox.getZone', [(int)$zoneId]);
         $oZoneInfo = new OA_Dll_ZoneInfo();
         $oZoneInfo->readDataFromArray($dataZone);
 
@@ -1058,8 +1120,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function getZoneListByPublisherId($publisherId)
     {
-        $dataZoneList = $this->_sendWithSession('ox.getZoneListByPublisherId', array((int) $publisherId));
-        $returnData = array();
+        $dataZoneList = $this->_sendWithSession('ox.getZoneListByPublisherId', [(int)$publisherId]);
+        $returnData = [];
         foreach ($dataZoneList as $dataZone) {
             $oZoneInfo = new OA_Dll_ZoneInfo();
             $oZoneInfo->readDataFromArray($dataZone);
@@ -1077,7 +1139,7 @@ class OpenAdsV2ApiXmlRpc
      */
     function deleteZone($zoneId)
     {
-        return (bool) $this->_sendWithSession('ox.deleteZone', array((int) $zoneId));
+        return (bool)$this->_sendWithSession('ox.deleteZone', [(int)$zoneId]);
     }
 
     /**
@@ -1091,7 +1153,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function zoneDailyStatistics($zoneId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        $statisticsData = $this->_callStatisticsMethod('ox.zoneDailyStatistics', $zoneId, $oStartDate, $oEndDate, $useManagerTimezone);
+        $statisticsData = $this->_callStatisticsMethod('ox.zoneDailyStatistics', $zoneId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
 
         foreach ($statisticsData as $key => $data) {
             $statisticsData[$key]['day'] = \Carbon\Carbon::parse($data['day'])->format('Y-m-d');
@@ -1111,7 +1174,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function zoneAdvertiserStatistics($zoneId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.xzoneAdvertiserStatistics', $zoneId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.xzoneAdvertiserStatistics', $zoneId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -1125,7 +1189,8 @@ class OpenAdsV2ApiXmlRpc
      */
     function zoneCampaignStatistics($zoneId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.zoneCampaignStatistics', $zoneId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.zoneCampaignStatistics', $zoneId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     /**
@@ -1139,34 +1204,36 @@ class OpenAdsV2ApiXmlRpc
      */
     function zoneBannerStatistics($zoneId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
-        return $this->_callStatisticsMethod('ox.zoneBannerStatistics', $zoneId, $oStartDate, $oEndDate, $useManagerTimezone);
+        return $this->_callStatisticsMethod('ox.zoneBannerStatistics', $zoneId, $oStartDate, $oEndDate,
+            $useManagerTimezone);
     }
 
     function linkBanner($zoneId, $bannerId)
     {
-        return (bool) $this->_sendWithSession('ox.linkBanner', array((int)$zoneId, (int)$bannerId));
+        return (bool)$this->_sendWithSession('ox.linkBanner', [(int)$zoneId, (int)$bannerId]);
     }
 
     function linkCampaign($zoneId, $campaignId)
     {
-        return (bool) $this->_sendWithSession('ox.linkCampaign', array((int)$zoneId, (int)$campaignId));
+        return (bool)$this->_sendWithSession('ox.linkCampaign', [(int)$zoneId, (int)$campaignId]);
     }
 
     function unlinkBanner($zoneId, $bannerId)
     {
-        return (bool) $this->_sendWithSession('ox.unlinkBanner', array((int)$zoneId, (int)$bannerId));
+        return (bool)$this->_sendWithSession('ox.unlinkBanner', [(int)$zoneId, (int)$bannerId]);
     }
 
     function unlinkCampaign($zoneId, $campaignId)
     {
-        return (bool) $this->_sendWithSession('ox.unlinkCampaign', array((int)$zoneId, (int)$campaignId));
+        return (bool)$this->_sendWithSession('ox.unlinkCampaign', [(int)$zoneId, (int)$campaignId]);
     }
 
     function generateTags($zoneId, $codeType, $aParams = null)
     {
-        if (!isset($aParams)) {
-            $aParams = array();
+        if (! isset($aParams)) {
+            $aParams = [];
         }
-        return $this->_sendWithSession('ox.generateTags', array((int)$zoneId, $codeType, $aParams));
+
+        return $this->_sendWithSession('ox.generateTags', [(int)$zoneId, $codeType, $aParams]);
     }
 }

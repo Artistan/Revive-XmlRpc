@@ -37,6 +37,8 @@ class OpenAdsV1ApiXmlRpc
 
     var $password;
 
+    var $ssl;
+
     /**
      * The sessionId is set by the logon() method called during the constructor.
      *
@@ -69,12 +71,13 @@ class OpenAdsV1ApiXmlRpc
      */
     function __construct($host, $basepath, $username, $password, $port = 0, $ssl = false, $timeout = 15)
     {
-        $this->host = ($ssl ? 'https://' : 'http://').$host;
+        $this->host = $host;
         $this->basepath = rtrim($basepath, '/');
         $this->port = $port;
         $this->timeout = $timeout;
         $this->username = $username;
         $this->password = $password;
+        $this->ssl = $ssl;
         $this->_logon();
     }
 
@@ -86,7 +89,8 @@ class OpenAdsV1ApiXmlRpc
      */
     function &_getClient($service)
     {
-        $oClient = new Client($this->basepath.'/'.$service.$this->debug, $this->host, $this->port);
+        $oClient = new Client($this->basepath.'/'.$service.$this->debug, $this->host, $this->port,
+            $this->ssl ? 'https' : 'http');
 
         return $oClient;
     }
@@ -290,7 +294,8 @@ class OpenAdsV1ApiXmlRpc
      */
     function agencyDailyStatistics($agencyId, $oStartDate = null, $oEndDate = null)
     {
-        return $this->_dailyStatistics('AgencyXmlRpcService.php', 'agencyDailyStatistics', $agencyId, $oStartDate, $oEndDate);
+        return $this->_dailyStatistics('AgencyXmlRpcService.php', 'agencyDailyStatistics', $agencyId, $oStartDate,
+            $oEndDate);
     }
 
     /**
@@ -445,7 +450,8 @@ class OpenAdsV1ApiXmlRpc
      */
     function advertiserDailyStatistics($advertiserId, $oStartDate = null, $oEndDate = null)
     {
-        return $this->_dailyStatistics('AdvertiserXmlRpcService.php', 'advertiserDailyStatistics', $advertiserId, $oStartDate, $oEndDate);
+        return $this->_dailyStatistics('AdvertiserXmlRpcService.php', 'advertiserDailyStatistics', $advertiserId,
+            $oStartDate, $oEndDate);
     }
 
     /**
@@ -586,7 +592,8 @@ class OpenAdsV1ApiXmlRpc
      */
     function campaignDailyStatistics($campaignId, $oStartDate = null, $oEndDate = null)
     {
-        return $this->_dailyStatistics('CampaignXmlRpcService.php', 'campaignDailyStatistics', $campaignId, $oStartDate, $oEndDate);
+        return $this->_dailyStatistics('CampaignXmlRpcService.php', 'campaignDailyStatistics', $campaignId, $oStartDate,
+            $oEndDate);
     }
 
     /**
@@ -756,7 +763,8 @@ class OpenAdsV1ApiXmlRpc
      */
     function bannerDailyStatistics($bannerId, $oStartDate = null, $oEndDate = null)
     {
-        return $this->_dailyStatistics('BannerXmlRpcService.php', 'bannerDailyStatistics', $bannerId, $oStartDate, $oEndDate);
+        return $this->_dailyStatistics('BannerXmlRpcService.php', 'bannerDailyStatistics', $bannerId, $oStartDate,
+            $oEndDate);
     }
 
     /**
@@ -865,7 +873,8 @@ class OpenAdsV1ApiXmlRpc
      */
     function publisherDailyStatistics($publisherId, $oStartDate = null, $oEndDate = null)
     {
-        return $this->_dailyStatistics('PublisherXmlRpcService.php', 'publisherDailyStatistics', $publisherId, $oStartDate, $oEndDate);
+        return $this->_dailyStatistics('PublisherXmlRpcService.php', 'publisherDailyStatistics', $publisherId,
+            $oStartDate, $oEndDate);
     }
 
     /**
