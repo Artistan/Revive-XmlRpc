@@ -13,7 +13,7 @@
     "api",
     "xmlrpc"
   ],
-  "license": "GNU GENERAL PUBLIC LICENSE",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "Charles Peterson",
