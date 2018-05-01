@@ -1,0 +1,32 @@
+{
+  "name": "artistan/revive-xmlrpc",
+  "description": "copy of the library classes to provide XmlRpc routines on revive ad server",
+  "homepage": "https://github.com/Artistan/revive-xmlrpc",
+  "type": "library",
+  "require": {
+    "phpxmlrpc/phpxmlrpc": "dev-master",
+    "carbondate/carbon": "1.9.*"
+  },
+  "keywords": [
+    "revive",
+    "adsserver",
+    "api",
+    "xmlrpc"
+  ],
+  "license": "GNU GENERAL PUBLIC LICENSE",
+  "authors": [
+    {
+      "name": "Revive Software and Services BV",
+      "email": "admin@revive-sas.com"
+    },
+    {
+      "name": "Charles Peterson",
+      "email": "artistan@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Artistan\\ReviveXmlRpc\\": "src/"
+    }
+  }
+}
