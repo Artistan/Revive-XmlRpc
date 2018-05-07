@@ -176,7 +176,7 @@ class OpenAdsDisplayXmlRpc
             new Value($target, 'string'),
             new Value($source, 'string'),
             new Value($withText, 'boolean'),
-            new Value([], 'array'),
+            new Value($xmlContext, 'array'),
         ]);
 
         // Create an XML-RPC client to communicate with the XML-RPC server:
@@ -199,8 +199,6 @@ class OpenAdsDisplayXmlRpc
 
             return $this->_convertEncoding($response, $charset);
         }
-        var_dump($response);
-        exit;
 
         return [
             'html' => '',
