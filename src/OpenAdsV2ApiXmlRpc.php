@@ -1208,26 +1208,237 @@ class OpenAdsV2ApiXmlRpc
             $useManagerTimezone);
     }
 
+    /**
+     * This method adds a channel to the channel object.
+     *
+     * @param OA_Dll_ChannelInfo $oChannelInfo
+     * @return mixed result
+     */
+    function addChannel(&$oChannelInfo)
+    {
+        return (int)$this->_sendWithSession('ox.addChannel', [&$oChannelInfo]);
+    }
+
+    /**
+     * This method modifies a channel.
+     *
+     * @param OA_Dll_ChannelInfo $oChannelInfo
+     * @return mixed result
+     */
+    function modifyChannel(&$oChannelInfo)
+    {
+        return (bool)$this->_sendWithSession('ox.modifyChannel', [&$oChannelInfo]);
+    }
+
+    /**
+     * This method returns ChannelInfo for a specified channel.
+     *
+     * @param int $channelId
+     * @return OA_Dll_ChannelInfo
+     */
+    function getChannel($channelId)
+    {
+        $dataChannel = $this->_sendWithSession('ox.getChannel', [(int)$channelId]);
+        $oChannelInfo = new OA_Dll_ChannelInfo();
+        $oChannelInfo->readDataFromArray($dataChannel);
+
+        return $oChannelInfo;
+    }
+
+    /**
+     * This method returns a list of channels by Website ID.
+     *
+     * @param int $websiteId
+     *
+     * @return array  array OA_Dll_ChannelInfo objects
+     */
+    function getChannelListByWebsiteId($websiteId)
+    {
+        $dataChannelList = $this->_sendWithSession('ox.getChannelListByWebsiteId', [(int)$websiteId]);
+        $returnData = [];
+        foreach ($dataChannelList as $dataChannel) {
+            $oChannelInfo = new OA_Dll_ChannelInfo();
+            $oChannelInfo->readDataFromArray($dataChannel);
+            $returnData[] = $oChannelInfo;
+        }
+
+        return $returnData;
+    }
+
+    /**
+     * This method returns a list of channels by Agency ID.
+     *
+     * @param int $agencyId
+     *
+     * @return array  array OA_Dll_ChannelInfo objects
+     */
+    function getChannelListByAgencyId($agencyId)
+    {
+        $dataChannelList = $this->_sendWithSession('ox.getChannelListByAgencyId', [(int)$agencyId]);
+        $returnData = [];
+        foreach ($dataChannelList as $dataChannel) {
+            $oChannelInfo = new OA_Dll_ChannelInfo();
+            $oChannelInfo->readDataFromArray($dataChannel);
+            $returnData[] = $oChannelInfo;
+        }
+
+        return $returnData;
+    }
+
+    /**
+     * This method updates channels SSO Channel Id
+     *
+     * @param int $oldSsoChannelId
+     * @param int $newSsoChannelId
+     * @return bool
+     */
+    function updateSsoChannelId($oldSsoChannelId, $newSsoChannelId)
+    {
+        return (bool)$this->_sendWithSession('ox.updateSsoChannelId', [(int)$oldSsoChannelId, (int)$newSsoChannelId]);
+    }
+
+    /**
+     * This method returns TargetingInfo for a specified channel.
+     *
+     * @param int $channelId
+     *
+     * @return array
+     */
+    function getChannelTargeting($channelId)
+    {
+        $dataChannelTargetingList = $this->_sendWithSession('ox.getChannelTargeting', [(int)$channelId]);
+        $returnData = [];
+        foreach ($dataChannelTargetingList as $dataChannelTargeting) {
+            $oChannelTargetingInfo = new OA_Dll_TargetingInfo();
+            $oChannelTargetingInfo->readDataFromArray($dataChannelTargeting);
+            $returnData[] = $oChannelTargetingInfo;
+        }
+
+        return $returnData;
+    }
+
+    /**
+     * This method takes an array of targeting info objects and a channel id
+     * and sets the targeting for the channel to the values passed in
+     *
+     * @param integer $channelId
+     * @param array $aTargeting
+     *
+     * @return bool
+     */
+    function setChannelTargeting($channelId, $aTargeting)
+    {
+        $aTargetingInfoObjects = [];
+        foreach ($aTargeting as $aTargetingArray) {
+            $oTargetingInfo = new OA_Dll_TargetingInfo();
+            $oTargetingInfo->readDataFromArray($aTargetingArray);
+            $aTargetingInfoObjects[] = $oTargetingInfo;
+        }
+
+        return (bool)$this->_sendWithSession('ox.setChannelTargeting', [(int)$channelId, $aTargetingInfoObjects]);
+    }
+
+    /**
+     * This method adds a variable to the variable object.
+     *
+     * @param OA_Dll_VariableInfo $oVariableInfo
+     * @return mixed result
+     */
+    function addVariable(&$oVariableInfo)
+    {
+        return (int)$this->_sendWithSession('ox.addVariable', [&$oVariableInfo]);
+    }
+
+    /**
+     * This method modifies a variable.
+     *
+     * @param OA_Dll_VariableInfo $oVariableInfo
+     * @return mixed result
+     */
+    function modifyVariable(&$oVariableInfo)
+    {
+        return (bool)$this->_sendWithSession('ox.modifyVariable', [&$oVariableInfo]);
+    }
+
+    /**
+     * This method returns VariableInfo for a specified variable.
+     *
+     * @param int $variableId
+     * @return OA_Dll_VariableInfo
+     */
+    function getVariable($variableId)
+    {
+        $dataVariable = $this->_sendWithSession('ox.getVariable', [(int)$variableId]);
+        $oVariableInfo = new OA_Dll_VariableInfo();
+        $oVariableInfo->readDataFromArray($dataVariable);
+
+        return $oVariableInfo;
+    }
+
+    /**
+     * A method to link a banner to a zone
+     *
+     * @param int $zoneId
+     * @param int $bannerId
+     * @return bool
+     */
     function linkBanner($zoneId, $bannerId)
     {
         return (bool)$this->_sendWithSession('ox.linkBanner', [(int)$zoneId, (int)$bannerId]);
     }
 
+    /**
+     * A method to link a campaign to a zone
+     *
+     * @param int $zoneId
+     * @param int $campaignId
+     * @return bool
+     */
     function linkCampaign($zoneId, $campaignId)
     {
         return (bool)$this->_sendWithSession('ox.linkCampaign', [(int)$zoneId, (int)$campaignId]);
     }
 
+    /**
+     * A method to unlink a banner from a zone
+     *
+     * @param int $zoneId
+     * @param int $bannerId
+     * @return bool
+     */
     function unlinkBanner($zoneId, $bannerId)
     {
         return (bool)$this->_sendWithSession('ox.unlinkBanner', [(int)$zoneId, (int)$bannerId]);
     }
 
+    /**
+     * A method to unlink a campaign from a zone
+     *
+     * @param int $zoneId
+     * @param int $campaignId
+     * @return bool
+     */
     function unlinkCampaign($zoneId, $campaignId)
     {
         return (bool)$this->_sendWithSession('ox.unlinkCampaign', [(int)$zoneId, (int)$campaignId]);
     }
 
+    /**
+     * A method to unlink a campaign from a zone
+     *
+     * @param int $zoneId
+     * @param string $codeType must exist in invocationTags
+     *     invocationTags:oxInvocationTags:adframe
+     *     invocationTags:oxInvocationTags:adjs
+     *     invocationTags:oxInvocationTags:adlayer
+     *     invocationTags:oxInvocationTags:adview
+     *     invocationTags:oxInvocationTags:adviewnocookies
+     *     invocationTags:oxInvocationTags:local
+     *     invocationTags:oxInvocationTags:popup
+     *     invocationTags:oxInvocationTags:xmlrpc
+     * @param array  $aParams          Input parameters, if null globals will be fetched
+     * @return bool
+     */
     function generateTags($zoneId, $codeType, $aParams = null)
     {
         if (! isset($aParams)) {

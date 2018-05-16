@@ -50,9 +50,17 @@ $list = $rpc->getAgencyList();
 
 ```php
 
-        $rpc = new OpenAdsDisplayXmlRpc('ads.energybin.com', '/www/delivery/axmlrpc.php', 443, true, 15);
+        $rpc = new OpenAdsDisplayXmlRpc('ads.me.com', '/www/delivery/axmlrpc.php', 443, true, 15);
         $rpc->setRemoteInfo('remote_addr', 'chuck-dev');
-        $list = $rpc->view('zone:1', 0, '', '', 0, [], '');
+        $list = $rpc->view(
+        	/* string    zone */ 'zone:1', 
+        	/* int campaignid */ 0, 
+        	/* string  target */ '', 
+        	/* string  source */ '', 
+        	/* 0|1   withText */ 0, 
+        	/* array  contect */ [], 
+        	/* strubg charset */ ''
+		);
         var_dump(json_decode(json_encode($list),true));
 
 ```

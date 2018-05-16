@@ -13,8 +13,8 @@
 namespace Artistan\ReviveXmlRpc;
 
 /**
- * The OA_Dll_PublisherInfo class extends the base OA_Info class and contains
- * information about publisher
+ * The OA_Dll_TargetingInfo class extends the base OA_Info class and contains
+ * information about targeting
  *
  */
 class OA_Dll_TargetingInfo extends OA_Info
