@@ -40,6 +40,8 @@ class OpenAdsV2ApiXmlRpc
 
     var $ssl;
 
+    var $config=[];
+
     /**
      * The sessionId is set by the logon() method called during the constructor.
      *
@@ -61,7 +63,8 @@ class OpenAdsV2ApiXmlRpc
     /**
      * PHP4 style constructor
      *
-     * @param string $host The name of the host to which to connect.
+     * @param string|array $host_config The name of the host to which to connect. OR array of configs
+     *     ['host'=>'',...]  for host, basepath, username, password and optionally port, ssl, timeout
      * @param string $basepath The base path to XML-RPC services.
      * @param string $username The username to authenticate to the web services API.
      * @param string $password The password for this user.
@@ -70,16 +73,36 @@ class OpenAdsV2ApiXmlRpc
      * @param bool $ssl Set to true to connect using an SSL connection.
      * @param int $timeout The timeout period to wait for a response.
      */
-    function __construct($host, $basepath, $username, $password, $port = 0, $ssl = false, $timeout = 15)
+    function __construct($host_config=null, $basepath=null, $username=null, $password=null, $port = null, $ssl = null, $timeout = null)
     {
-        $this->host = $host;
-        $this->basepath = rtrim($basepath, '/');
-        $this->port = $port;
-        $this->timeout = $timeout;
-        $this->username = $username;
-        $this->password = $password;
-        $this->ssl = $ssl;
+        if(is_array($host_config)) {
+            $this->load_config($host_config);
+            $host_config=null;
+        }
+        $this->host = $host_config??$this->config('host');
+        $this->basepath = rtrim($basepath??$this->config('basepath'), '/');
+        $this->port = $port??$this->config('port',0);
+        $this->timeout = $timeout??$this->config('timeout',15);
+        $this->username = $username??$this->config('username');
+        $this->password = $password??$this->config('password');
+        $this->ssl = $ssl??$this->config('ssl',false);
         $this->_logon();
+    }
+
+    function load_config($config) {
+        $this->config = $config;
+    }
+
+    function config($key,$default=null) {
+        if(function_exists('config')) {
+            // allow laravel type loading configs from project
+            return config('revive-xmlrpc.'.$key, $default);
+        }
+        if(empty($this->config)) {
+            // get the configs directly from the config file if not set already.
+            $this->config = require __DIR__.'/Assets/Config/revive-xmlrpc.php';
+        }
+        return $this->config[$key]??$default;
     }
 
     /**

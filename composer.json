@@ -5,7 +5,8 @@
   "type": "library",
   "require": {
     "phpxmlrpc/phpxmlrpc": "dev-master",
-    "carbondate/carbon": "1.9.*"
+    "carbondate/carbon": "1.9.*",
+    "illuminate/support": "5.6.*"
   },
   "keywords": [
     "revive",
@@ -23,6 +24,13 @@
   "autoload": {
     "psr-4": {
       "Artistan\\ReviveXmlRpc\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Artistan\\ReviveXmlRpc\\Provider"
+      ]
     }
   }
 }

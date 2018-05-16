@@ -1,0 +1,8 @@
+
+RVRPC_HOST=ads.myhost.com
+RVRPC_BASEPATH=/api/v2/xmlrpc/
+RVRPC_USERNAME=admininistrator
+RVRPC_PASSWORD=K33pThisS3cre+
+RVRPC_PORT=0
+RVRPC_SSL=1
+RVRPC_TIMEOUT=15
