@@ -228,8 +228,7 @@ class OpenAdsV1ApiXmlRpc
     function getAgency($agencyId)
     {
         $dataAgency = $this->_sendWithSession('AgencyXmlRpcService.php', 'getAgency', [(int)$agencyId]);
-        $oAgencyInfo = new OA_Dll_AgencyInfo();
-        $oAgencyInfo->readDataFromArray($dataAgency);
+        $oAgencyInfo = new OA_Dll_AgencyInfo($dataAgency);
 
         return $oAgencyInfo;
     }
@@ -244,8 +243,7 @@ class OpenAdsV1ApiXmlRpc
         $dataAgencyList = $this->_sendWithSession('AgencyXmlRpcService.php', 'getAgencyList');
         $returnData = [];
         foreach ($dataAgencyList as $dataAgency) {
-            $oAgencyInfo = new OA_Dll_AgencyInfo();
-            $oAgencyInfo->readDataFromArray($dataAgency);
+            $oAgencyInfo = new OA_Dll_AgencyInfo($dataAgency);
             $returnData[] = $oAgencyInfo;
         }
 
@@ -402,8 +400,7 @@ class OpenAdsV1ApiXmlRpc
     function getAdvertiser($advertiserId)
     {
         $dataAdvertiser = $this->_sendWithSession('AdvertiserXmlRpcService.php', 'getAdvertiser', [(int)$advertiserId]);
-        $oAdvertiserInfo = new OA_Dll_AdvertiserInfo();
-        $oAdvertiserInfo->readDataFromArray($dataAdvertiser);
+        $oAdvertiserInfo = new OA_Dll_AdvertiserInfo($dataAdvertiser);
 
         return $oAdvertiserInfo;
     }
@@ -421,8 +418,7 @@ class OpenAdsV1ApiXmlRpc
             [(int)$agencyId]);
         $returnData = [];
         foreach ($dataAdvertiserList as $dataAdvertiser) {
-            $oAdvertiserInfo = new OA_Dll_AdvertiserInfo();
-            $oAdvertiserInfo->readDataFromArray($dataAdvertiser);
+            $oAdvertiserInfo = new OA_Dll_AdvertiserInfo($dataAdvertiser);
             $returnData[] = $oAdvertiserInfo;
         }
 
@@ -544,8 +540,7 @@ class OpenAdsV1ApiXmlRpc
     function getCampaign($campaignId)
     {
         $dataCampaign = $this->_sendWithSession('CampaignXmlRpcService.php', 'getCampaign', [(int)$campaignId]);
-        $oCampaignInfo = new OA_Dll_CampaignInfo();
-        $oCampaignInfo->readDataFromArray($dataCampaign);
+        $oCampaignInfo = new OA_Dll_CampaignInfo($dataCampaign);
 
         return $oCampaignInfo;
     }
@@ -563,8 +558,7 @@ class OpenAdsV1ApiXmlRpc
             [(int)$advertiserId]);
         $returnData = [];
         foreach ($dataCampaignList as $dataCampaign) {
-            $oCampaignInfo = new OA_Dll_CampaignInfo();
-            $oCampaignInfo->readDataFromArray($dataCampaign);
+            $oCampaignInfo = new OA_Dll_CampaignInfo($dataCampaign);
             $returnData[] = $oCampaignInfo;
         }
 
@@ -672,8 +666,7 @@ class OpenAdsV1ApiXmlRpc
     function getBanner($bannerId)
     {
         $dataBanner = $this->_sendWithSession('BannerXmlRpcService.php', 'getBanner', [(int)$bannerId]);
-        $oBannerInfo = new OA_Dll_BannerInfo();
-        $oBannerInfo->readDataFromArray($dataBanner);
+        $oBannerInfo = new OA_Dll_BannerInfo($dataBanner);
 
         return $oBannerInfo;
     }
@@ -691,8 +684,7 @@ class OpenAdsV1ApiXmlRpc
             [(int)$bannerId]);
         $returnData = [];
         foreach ($dataBannerTargetingList as $dataBannerTargeting) {
-            $oBannerTargetingInfo = new OA_Dll_TargetingInfo();
-            $oBannerTargetingInfo->readDataFromArray($dataBannerTargeting);
+            $oBannerTargetingInfo = new OA_Dll_TargetingInfo($dataBannerTargeting);
             $returnData[] = $oBannerTargetingInfo;
         }
 
@@ -712,8 +704,7 @@ class OpenAdsV1ApiXmlRpc
     {
         $aTargetingInfoObjects = [];
         foreach ($aTargeting as $aTargetingArray) {
-            $oTargetingInfo = new OA_Dll_TargetingInfo();
-            $oTargetingInfo->readDataFromArray($aTargetingArray);
+            $oTargetingInfo = new OA_Dll_TargetingInfo($aTargetingArray);
             $aTargetingInfoObjects[] = $oTargetingInfo;
         }
 
@@ -734,8 +725,7 @@ class OpenAdsV1ApiXmlRpc
             [(int)$campaignId]);
         $returnData = [];
         foreach ($dataBannerList as $dataBanner) {
-            $oBannerInfo = new OA_Dll_BannerInfo();
-            $oBannerInfo->readDataFromArray($dataBanner);
+            $oBannerInfo = new OA_Dll_BannerInfo($dataBanner);
             $returnData[] = $oBannerInfo;
         }
 
@@ -826,8 +816,7 @@ class OpenAdsV1ApiXmlRpc
     function getPublisher($publisherId)
     {
         $dataPublisher = $this->_sendWithSession('PublisherXmlRpcService.php', 'getPublisher', [(int)$publisherId]);
-        $oPublisherInfo = new OA_Dll_PublisherInfo();
-        $oPublisherInfo->readDataFromArray($dataPublisher);
+        $oPublisherInfo = new OA_Dll_PublisherInfo($dataPublisher);
 
         return $oPublisherInfo;
     }
@@ -844,8 +833,7 @@ class OpenAdsV1ApiXmlRpc
             [(int)$agencyId]);
         $returnData = [];
         foreach ($dataPublisherList as $dataPublisher) {
-            $oPublisherInfo = new OA_Dll_PublisherInfo();
-            $oPublisherInfo->readDataFromArray($dataPublisher);
+            $oPublisherInfo = new OA_Dll_PublisherInfo($dataPublisher);
             $returnData[] = $oPublisherInfo;
         }
 
@@ -964,8 +952,7 @@ class OpenAdsV1ApiXmlRpc
     function getUser($userId)
     {
         $dataUser = $this->_sendWithSession('UserXmlRpcService.php', 'getUser', [(int)$userId]);
-        $oUserInfo = new OA_Dll_UserInfo();
-        $oUserInfo->readDataFromArray($dataUser);
+        $oUserInfo = new OA_Dll_UserInfo($dataUser);
 
         return $oUserInfo;
     }
@@ -982,8 +969,7 @@ class OpenAdsV1ApiXmlRpc
         $dataUserList = $this->_sendWithSession('UserXmlRpcService.php', 'getUserListByAccountId', [(int)$accountId]);
         $returnData = [];
         foreach ($dataUserList as $dataUser) {
-            $oUserInfo = new OA_Dll_UserInfo();
-            $oUserInfo->readDataFromArray($dataUser);
+            $oUserInfo = new OA_Dll_UserInfo($dataUser);
             $returnData[] = $oUserInfo;
         }
 
@@ -1058,8 +1044,7 @@ class OpenAdsV1ApiXmlRpc
     function getZone($zoneId)
     {
         $dataZone = $this->_sendWithSession('ZoneXmlRpcService.php', 'getZone', [(int)$zoneId]);
-        $oZoneInfo = new OA_Dll_ZoneInfo();
-        $oZoneInfo->readDataFromArray($dataZone);
+        $oZoneInfo = new OA_Dll_ZoneInfo($dataZone);
 
         return $oZoneInfo;
     }
@@ -1076,8 +1061,7 @@ class OpenAdsV1ApiXmlRpc
             [(int)$publisherId]);
         $returnData = [];
         foreach ($dataZoneList as $dataZone) {
-            $oZoneInfo = new OA_Dll_ZoneInfo();
-            $oZoneInfo->readDataFromArray($dataZone);
+            $oZoneInfo = new OA_Dll_ZoneInfo($dataZone);
             $returnData[] = $oZoneInfo;
         }
 

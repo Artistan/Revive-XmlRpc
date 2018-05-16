@@ -24,6 +24,16 @@ use Carbon\Carbon;
 abstract class OA_Info
 {
     /**
+     * @param array $aEntityData
+     */
+    function __construct(array $aEntityData=[])
+    {
+        if(!empty($aEntityData)){
+            $this->readDataFromArray($aEntityData);
+        }
+    }
+
+    /**
      * @return array
      */
     abstract function getFieldsTypes();
