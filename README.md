@@ -11,12 +11,13 @@ extracted into a package and updated to use packages rather than pear
 
 ## requires
 - php-xml
-- phpxmlrpc/phpxmlrpc
-- carbondate/carbon
 
-## examples
+## uses 
 
-these examples were testing in Laravel 5.6 Commands
+- [phpxmlrpc/phpxmlrpc](https://github.com/gggeek/phpxmlrpc)
+- [illuminate/support](https://github.com/illuminate/support)
+
+## SETUP
 
 #### composer
 
@@ -26,7 +27,11 @@ these examples were testing in Laravel 5.6 Commands
     }
 ```
 
-#### Version 2 xml
+## Using The API
+
+### Version 2 xml
+
+these examples were tested in Laravel 5.6 Commands
 
 ##### laravel config/env 
 
@@ -84,7 +89,7 @@ $rpc = new OpenAdsV2ApiXmlRpc('ads.me.com', '/www/api/v2/xmlrpc/', 'admin', '~te
 $list = $rpc->getAgencyList();
 ```
 
-#### Version 1 xml
+### API Version 1 xml
 
 ```php
 use Artistan\ReviveXmlRpc\OpenAdsV1ApiXmlRpc;
