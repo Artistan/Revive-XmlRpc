@@ -17,7 +17,7 @@ namespace Artistan\ReviveXmlRpc;
  *
  */
 
-class OA_Dll_AdvertiserInfo extends OA_Info
+class AdvertiserInfo extends Info
 {
 
     /**

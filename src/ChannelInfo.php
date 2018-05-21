@@ -17,7 +17,7 @@ namespace Artistan\ReviveXmlRpc;
  *
  */
 
-class OA_Dll_ChannelInfo extends OA_Info
+class ChannelInfo extends Info
 {
 
     /**

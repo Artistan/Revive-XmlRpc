@@ -17,7 +17,7 @@ namespace Artistan\ReviveXmlRpc;
  *
  */
 
-class OA_Dll_ZoneInfo extends OA_Info
+class ZoneInfo extends Info
 {
 
 

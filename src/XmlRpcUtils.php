@@ -21,7 +21,7 @@ use PhpXmlRpc\Value;
 class XmlRpcUtils
 {
     /**
-     * This method converts the Info object into an XML_RPC_Value and deletes null fields.
+     * This method converts the Info object into an Value and deletes null fields.
      *
      * @param object &$oInfoObject
      * @return \PhpXmlRpc\Value
@@ -33,12 +33,12 @@ class XmlRpcUtils
 
         foreach ($aInfoData as $fieldName => $fieldValue) {
             if (! is_null($fieldValue)) {
-                $aReturnData[$fieldName] = XmlRpcUtils::_setRPCTypeForField($oInfoObject->getFieldType($fieldName),
+                $aReturnData[$fieldName] = XmlRpcUtils::getRPCTypeForField($oInfoObject->getFieldType($fieldName),
                     $fieldValue);
             }
         }
 
-        return new Value($aReturnData, $GLOBALS['XML_RPC_Struct']);
+        return new Value($aReturnData, 'struct');
     }
 
     /**
@@ -48,32 +48,24 @@ class XmlRpcUtils
      * @param mixed $variable
      * @return \PhpXmlRpc\Value or false
      */
-    private static function _setRPCTypeForField($type, $variable)
+    public static function getRPCTypeForField($type, $variable)
     {
         switch ($type) {
-            case 'string':
-                return new Value($variable, $GLOBALS['XML_RPC_String']);
-
             case 'integer':
-                return new Value($variable, $GLOBALS['XML_RPC_Int']);
-
+                $type = 'int';
+            case 'string':
             case 'float':
             case 'double':
-                return new Value($variable, $GLOBALS['XML_RPC_Double']);
-
             case 'boolean':
-                return new Value($variable, $GLOBALS['XML_RPC_Boolean']);
-
+                return new Value($variable, $type);
             case 'date':
-
-                if (! is_object($variable) || ! is_a($variable, 'Date')) {
-                    die('Value should be PEAR::Date type');
+                if (! is_object($variable) || ! method_exists($variable, 'format')) {
+                    die('Value should be valid object which implements DateTimeInterface with format method');
                 }
+                /** @var \DateTimeInterface $variable */
+                $value = $variable->format('YmdTH:i:S');
 
-                $value = $variable->format('%Y%m%d').'T00:00:00';
-
-                return new Value($value, $GLOBALS['XML_RPC_DateTime']);
-
+                return new Value($value, 'dateTime.iso8601');
             case 'custom':
                 return $variable;
         }

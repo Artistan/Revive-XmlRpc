@@ -17,7 +17,7 @@ namespace Artistan\ReviveXmlRpc;
  *
  */
 
-class OA_Dll_AgencyInfo extends OA_Info
+class AgencyInfo extends Info
 {
     /**
      * The agencyID variable is the unique ID for the agency.

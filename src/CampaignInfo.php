@@ -17,7 +17,7 @@ namespace Artistan\ReviveXmlRpc;
  *
  */
 
-class OA_Dll_CampaignInfo extends OA_Info
+class CampaignInfo extends Info
 {
     /**
      * The campaignId variable is the unique ID for the campaign.
@@ -176,6 +176,10 @@ class OA_Dll_CampaignInfo extends OA_Info
 
         if (is_null($this->targetConversions)) {
             $this->targetConversions = 0;
+        }
+
+        if (is_null($this->bannerLimit)) {
+            $this->bannerLimit = 0;
         }
         /*
         if (is_null($this->revenue)) {

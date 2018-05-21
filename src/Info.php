@@ -21,7 +21,7 @@ use Carbon\Carbon;
  */
 
 
-abstract class OA_Info
+abstract class Info
 {
     /**
      * @param array $aEntityData

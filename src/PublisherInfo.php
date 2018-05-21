@@ -17,7 +17,7 @@ namespace Artistan\ReviveXmlRpc;
  *
  */
 
-class OA_Dll_PublisherInfo extends OA_Info
+class PublisherInfo extends Info
 {
 
     /**

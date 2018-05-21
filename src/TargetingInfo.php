@@ -13,11 +13,11 @@
 namespace Artistan\ReviveXmlRpc;
 
 /**
- * The OA_Dll_TargetingInfo class extends the base OA_Info class and contains
+ * The TargetingInfo class extends the base Info class and contains
  * information about targeting
  *
  */
-class OA_Dll_TargetingInfo extends OA_Info
+class TargetingInfo extends Info
 {
     /**
      * 99% will be "and" or "or", but that's not enforced

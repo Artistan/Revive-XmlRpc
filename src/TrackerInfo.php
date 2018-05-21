@@ -13,11 +13,11 @@
 namespace Artistan\ReviveXmlRpc;
 
 /**
- * The OA_Dll_TrackerInfo class extends the base OA_Info class and contains
+ * The TrackerInfo class extends the base Info class and contains
  * information about tracker
  *
  */
-class OA_Dll_TrackerInfo extends OA_Info
+class TrackerInfo extends Info
 {
     // Required fields
     /**

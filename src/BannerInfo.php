@@ -19,7 +19,7 @@ use PhpXmlRpc\Value;
  *
  */
 
-class OA_Dll_BannerInfo extends OA_Info
+class BannerInfo extends Info
 {
 
     /**

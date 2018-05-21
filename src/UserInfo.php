@@ -13,12 +13,12 @@
 namespace Artistan\ReviveXmlRpc;
 
 /**
- * The OA_Dll_UserInfo class extends the base OA_Info class and
+ * The UserInfo class extends the base Info class and
  * contains information about the user.
  *
  */
 
-class OA_Dll_UserInfo extends OA_Info
+class UserInfo extends Info
 {
     /**
      * This fields provides the ID of the user

@@ -15,6 +15,7 @@ namespace Artistan\ReviveXmlRpc;
 use PhpXmlRpc\Client;
 use PhpXmlRpc\Encoder;
 use PhpXmlRpc\Request;
+use PhpXmlRpc\Value;
 
 /**
  * A library class to provide XML-RPC routines on
@@ -106,7 +107,7 @@ class OpenAdsV2ApiXmlRpc
     }
 
     /**
-     * A private method to return an XML_RPC_Client to the API service
+     * A private method to return an Client to the API service
      *
      * @return \PhpXmlRpc\Client
      */
@@ -144,10 +145,16 @@ class OpenAdsV2ApiXmlRpc
         $encoder = new Encoder();
         $result = false;
         foreach ($data as $element) {
-            if (is_object($element) && is_subclass_of($element, 'OA_Info')) {
+            if (is_object($element) && is_subclass_of($element, 'Artistan\ReviveXmlRpc\Info')) {
                 $dataMessage[] = XmlRpcUtils::getEntityWithNotNullFields($element);
             } else {
-                $dataMessage[] = $encoder->encode($element);
+                if(is_a($element, 'DateTimeInterface')) {
+                    /** @var \DateTimeInterface $element */
+                    $value = $element->format('YmdTH:M:S');
+                    $dataMessage[] = new Value($value, 'dateTime.iso8601');
+                } else {
+                    $dataMessage[] = $encoder->encode($element);
+                }
             }
         }
         $message = new Request($method, $dataMessage);
@@ -161,6 +168,7 @@ class OpenAdsV2ApiXmlRpc
         if ($response && $response->faultCode() == 0) {
             $result = $encoder->decode($response->value());
         } else {
+            dd($dataMessage);
             trigger_error('XML-RPC Error ('.$response->faultCode().'): '.$response->faultString().' in method '.$method.'()',
                 E_USER_ERROR);
         }
@@ -209,10 +217,10 @@ class OpenAdsV2ApiXmlRpc
     ) {
         $dataArray = [(int)$entityId];
         if (is_object($oStartDate)) {
-            $dataArray[] = $oStartDate->format('%Y%m%dT%H:%M:%S');
+            $dataArray[] = $oStartDate->format('YmdTH:M:S');
 
             if (is_object($oEndDate)) {
-                $dataArray[] = $oEndDate->format('%Y%m%dT%H:%M:%S');
+                $dataArray[] = $oEndDate->format('YmdTH:M:S');
             }
         }
 
@@ -226,7 +234,7 @@ class OpenAdsV2ApiXmlRpc
      * This method sends a call to the AgencyXmlRpcService and
      * passes the AgencyInfo with the session to add an agency.
      *
-     * @param OA_Dll_AgencyInfo $oAgencyInfo
+     * @param AgencyInfo $oAgencyInfo
      * @return mixed result
      */
     function addAgency(&$oAgencyInfo)
@@ -238,7 +246,7 @@ class OpenAdsV2ApiXmlRpc
      * This method sends a call to the AgencyXmlRpcService and
      * passes the AgencyInfo object with the session to modify an agency.
      *
-     * @param OA_Dll_AgencyInfo $oAgencyInfo
+     * @param AgencyInfo $oAgencyInfo
      * @return mixed result
      */
     function modifyAgency(&$oAgencyInfo)
@@ -250,12 +258,12 @@ class OpenAdsV2ApiXmlRpc
      * This method  returns the AgencyInfo for a specified agency.
      *
      * @param int $agencyId
-     * @return OA_Dll_AgencyInfo
+     * @return AgencyInfo
      */
     function getAgency($agencyId)
     {
         $dataAgency = $this->_sendWithSession('ox.getAgency', [(int)$agencyId]);
-        $oAgencyInfo = new OA_Dll_AgencyInfo();
+        $oAgencyInfo = new AgencyInfo();
         $oAgencyInfo->readDataFromArray($dataAgency);
 
         return $oAgencyInfo;
@@ -264,14 +272,14 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method returns AgencyInfo for all agencies.
      *
-     * @return array  array OA_Dll_AgencyInfo objects
+     * @return array  array AgencyInfo objects
      */
     function getAgencyList()
     {
         $dataAgencyList = $this->_sendWithSession('ox.getAgencyList');
         $returnData = [];
         foreach ($dataAgencyList as $dataAgency) {
-            $oAgencyInfo = new OA_Dll_AgencyInfo();
+            $oAgencyInfo = new AgencyInfo();
             $oAgencyInfo->readDataFromArray($dataAgency);
             $returnData[] = $oAgencyInfo;
         }
@@ -389,7 +397,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method adds an advertiser.
      *
-     * @param OA_Dll_AdvertiserInfo $oAdvertiserInfo
+     * @param AdvertiserInfo $oAdvertiserInfo
      *
      * @return mixed result
      */
@@ -401,7 +409,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method modifies an advertiser.
      *
-     * @param OA_Dll_AdvertiserInfo $oAdvertiserInfo
+     * @param AdvertiserInfo $oAdvertiserInfo
      *
      * @return mixed result
      */
@@ -415,12 +423,12 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param int $advertiserId
      *
-     * @return OA_Dll_AdvertiserInfo
+     * @return AdvertiserInfo
      */
     function getAdvertiser($advertiserId)
     {
         $dataAdvertiser = $this->_sendWithSession('ox.getAdvertiser', [(int)$advertiserId]);
-        $oAdvertiserInfo = new OA_Dll_AdvertiserInfo();
+        $oAdvertiserInfo = new AdvertiserInfo();
         $oAdvertiserInfo->readDataFromArray($dataAdvertiser);
 
         return $oAdvertiserInfo;
@@ -431,14 +439,14 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param int $agencyId
      *
-     * @return array  array OA_Dll_AgencyInfo objects
+     * @return array  array AgencyInfo objects
      */
     function getAdvertiserListByAgencyId($agencyId)
     {
         $dataAdvertiserList = $this->_sendWithSession('ox.getAdvertiserListByAgencyId', [(int)$agencyId]);
         $returnData = [];
         foreach ($dataAdvertiserList as $dataAdvertiser) {
-            $oAdvertiserInfo = new OA_Dll_AdvertiserInfo();
+            $oAdvertiserInfo = new AdvertiserInfo();
             $oAdvertiserInfo->readDataFromArray($dataAdvertiser);
             $returnData[] = $oAdvertiserInfo;
         }
@@ -553,7 +561,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method adds a campaign to the campaign object.
      *
-     * @param OA_Dll_CampaignInfo $oCampaignInfo
+     * @param CampaignInfo $oCampaignInfo
      *
      * @return mixed result
      */
@@ -565,7 +573,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method modifies a campaign.
      *
-     * @param OA_Dll_CampaignInfo $oCampaignInfo
+     * @param CampaignInfo $oCampaignInfo
      *
      * @return mixed result
      */
@@ -579,12 +587,12 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param int $campaignId
      *
-     * @return OA_Dll_CampaignInfo
+     * @return CampaignInfo
      */
     function getCampaign($campaignId)
     {
         $dataCampaign = $this->_sendWithSession('ox.getCampaign', [(int)$campaignId]);
-        $oCampaignInfo = new OA_Dll_CampaignInfo();
+        $oCampaignInfo = new CampaignInfo();
         $oCampaignInfo->readDataFromArray($dataCampaign);
 
         return $oCampaignInfo;
@@ -595,14 +603,14 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param int $advertiserId
      *
-     * @return array  array OA_Dll_CampaignInfo objects
+     * @return array  array CampaignInfo objects
      */
     function getCampaignListByAdvertiserId($advertiserId)
     {
         $dataCampaignList = $this->_sendWithSession('ox.getCampaignListByAdvertiserId', [(int)$advertiserId]);
         $returnData = [];
         foreach ($dataCampaignList as $dataCampaign) {
-            $oCampaignInfo = new OA_Dll_CampaignInfo();
+            $oCampaignInfo = new CampaignInfo();
             $oCampaignInfo->readDataFromArray($dataCampaign);
             $returnData[] = $oCampaignInfo;
         }
@@ -690,7 +698,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method adds a banner to the banner object.
      *
-     * @param OA_Dll_BannerInfo $oBannerInfo
+     * @param BannerInfo $oBannerInfo
      *
      * @return mixed result
      */
@@ -702,7 +710,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method modifies a banner.
      *
-     * @param OA_Dll_BannerInfo $oBannerInfo
+     * @param BannerInfo $oBannerInfo
      *
      * @return mixed result
      */
@@ -716,12 +724,12 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param int $bannerId
      *
-     * @return OA_Dll_BannerInfo
+     * @return BannerInfo
      */
     function getBanner($bannerId)
     {
         $dataBanner = $this->_sendWithSession('ox.getBanner', [(int)$bannerId]);
-        $oBannerInfo = new OA_Dll_BannerInfo();
+        $oBannerInfo = new BannerInfo();
         $oBannerInfo->readDataFromArray($dataBanner);
 
         return $oBannerInfo;
@@ -739,7 +747,7 @@ class OpenAdsV2ApiXmlRpc
         $dataBannerTargetingList = $this->_sendWithSession('ox.getBannerTargeting', [(int)$bannerId]);
         $returnData = [];
         foreach ($dataBannerTargetingList as $dataBannerTargeting) {
-            $oBannerTargetingInfo = new OA_Dll_TargetingInfo();
+            $oBannerTargetingInfo = new TargetingInfo();
             $oBannerTargetingInfo->readDataFromArray($dataBannerTargeting);
             $returnData[] = $oBannerTargetingInfo;
         }
@@ -760,7 +768,7 @@ class OpenAdsV2ApiXmlRpc
     {
         $aTargetingInfoObjects = [];
         foreach ($aTargeting as $aTargetingArray) {
-            $oTargetingInfo = new OA_Dll_TargetingInfo();
+            $oTargetingInfo = new TargetingInfo();
             $oTargetingInfo->readDataFromArray($aTargetingArray);
             $aTargetingInfoObjects[] = $oTargetingInfo;
         }
@@ -773,14 +781,14 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param int $campaignId
      *
-     * @return array  array OA_Dll_CampaignInfo objects
+     * @return array  array CampaignInfo objects
      */
     function getBannerListByCampaignId($campaignId)
     {
         $dataBannerList = $this->_sendWithSession('ox.getBannerListByCampaignId', [(int)$campaignId]);
         $returnData = [];
         foreach ($dataBannerList as $dataBanner) {
-            $oBannerInfo = new OA_Dll_BannerInfo();
+            $oBannerInfo = new BannerInfo();
             $oBannerInfo->readDataFromArray($dataBanner);
             $returnData[] = $oBannerInfo;
         }
@@ -853,7 +861,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method adds a publisher to the publisher object.
      *
-     * @param OA_Dll_PublisherInfo $oPublisherInfo
+     * @param PublisherInfo $oPublisherInfo
      * @return mixed result
      */
     function addPublisher(&$oPublisherInfo)
@@ -864,7 +872,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method modifies a publisher.
      *
-     * @param OA_Dll_PublisherInfo $oPublisherInfo
+     * @param PublisherInfo $oPublisherInfo
      * @return mixed result
      */
     function modifyPublisher(&$oPublisherInfo)
@@ -876,12 +884,12 @@ class OpenAdsV2ApiXmlRpc
      * This method returns PublisherInfo for a specified publisher.
      *
      * @param int $publisherId
-     * @return OA_Dll_PublisherInfo
+     * @return PublisherInfo
      */
     function getPublisher($publisherId)
     {
         $dataPublisher = $this->_sendWithSession('ox.getPublisher', [(int)$publisherId]);
-        $oPublisherInfo = new OA_Dll_PublisherInfo();
+        $oPublisherInfo = new PublisherInfo();
         $oPublisherInfo->readDataFromArray($dataPublisher);
 
         return $oPublisherInfo;
@@ -891,14 +899,14 @@ class OpenAdsV2ApiXmlRpc
      * This method returns a list of publishers for a specified agency.
      *
      * @param int $agencyId
-     * @return array  array OA_Dll_PublisherInfo objects
+     * @return array  array PublisherInfo objects
      */
     function getPublisherListByAgencyId($agencyId)
     {
         $dataPublisherList = $this->_sendWithSession('ox.getPublisherListByAgencyId', [(int)$agencyId]);
         $returnData = [];
         foreach ($dataPublisherList as $dataPublisher) {
-            $oPublisherInfo = new OA_Dll_PublisherInfo();
+            $oPublisherInfo = new PublisherInfo();
             $oPublisherInfo->readDataFromArray($dataPublisher);
             $returnData[] = $oPublisherInfo;
         }
@@ -1009,7 +1017,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method adds a user to the user object.
      *
-     * @param OA_Dll_UserInfo $oUserInfo
+     * @param UserInfo $oUserInfo
      * @return mixed result
      */
     function addUser(&$oUserInfo)
@@ -1020,7 +1028,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method modifies a user.
      *
-     * @param OA_Dll_UserInfo $oUserInfo
+     * @param UserInfo $oUserInfo
      * @return mixed result
      */
     function modifyUser(&$oUserInfo)
@@ -1032,12 +1040,12 @@ class OpenAdsV2ApiXmlRpc
      * This method returns UserInfo for a specified user.
      *
      * @param int $userId
-     * @return OA_Dll_UserInfo
+     * @return UserInfo
      */
     function getUser($userId)
     {
         $dataUser = $this->_sendWithSession('ox.getUser', [(int)$userId]);
-        $oUserInfo = new OA_Dll_UserInfo();
+        $oUserInfo = new UserInfo();
         $oUserInfo->readDataFromArray($dataUser);
 
         return $oUserInfo;
@@ -1048,14 +1056,14 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param int $accountId
      *
-     * @return array  array OA_Dll_UserInfo objects
+     * @return array  array UserInfo objects
      */
     function getUserListByAccountId($accountId)
     {
         $dataUserList = $this->_sendWithSession('ox.getUserListByAccountId', [(int)$accountId]);
         $returnData = [];
         foreach ($dataUserList as $dataUser) {
-            $oUserInfo = new OA_Dll_UserInfo();
+            $oUserInfo = new UserInfo();
             $oUserInfo->readDataFromArray($dataUser);
             $returnData[] = $oUserInfo;
         }
@@ -1101,7 +1109,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method adds a zone to the zone object.
      *
-     * @param OA_Dll_ZoneInfo $oZoneInfo
+     * @param ZoneInfo $oZoneInfo
      * @return mixed result
      */
     function addZone(&$oZoneInfo)
@@ -1112,7 +1120,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method modifies a zone.
      *
-     * @param OA_Dll_ZoneInfo $oZoneInfo
+     * @param ZoneInfo $oZoneInfo
      * @return mixed result
      */
     function modifyZone(&$oZoneInfo)
@@ -1124,12 +1132,12 @@ class OpenAdsV2ApiXmlRpc
      * This method returns ZoneInfo for a specified zone.
      *
      * @param int $zoneId
-     * @return OA_Dll_ZoneInfo
+     * @return ZoneInfo
      */
     function getZone($zoneId)
     {
         $dataZone = $this->_sendWithSession('ox.getZone', [(int)$zoneId]);
-        $oZoneInfo = new OA_Dll_ZoneInfo();
+        $oZoneInfo = new ZoneInfo();
         $oZoneInfo->readDataFromArray($dataZone);
 
         return $oZoneInfo;
@@ -1139,14 +1147,14 @@ class OpenAdsV2ApiXmlRpc
      * This method returns a list of zones for a specified publisher.
      *
      * @param int $publisherId
-     * @return array  array OA_Dll_ZoneInfo objects
+     * @return array  array ZoneInfo objects
      */
     function getZoneListByPublisherId($publisherId)
     {
         $dataZoneList = $this->_sendWithSession('ox.getZoneListByPublisherId', [(int)$publisherId]);
         $returnData = [];
         foreach ($dataZoneList as $dataZone) {
-            $oZoneInfo = new OA_Dll_ZoneInfo();
+            $oZoneInfo = new ZoneInfo();
             $oZoneInfo->readDataFromArray($dataZone);
             $returnData[] = $oZoneInfo;
         }
@@ -1234,7 +1242,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method adds a channel to the channel object.
      *
-     * @param OA_Dll_ChannelInfo $oChannelInfo
+     * @param ChannelInfo $oChannelInfo
      * @return mixed result
      */
     function addChannel(&$oChannelInfo)
@@ -1245,7 +1253,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method modifies a channel.
      *
-     * @param OA_Dll_ChannelInfo $oChannelInfo
+     * @param ChannelInfo $oChannelInfo
      * @return mixed result
      */
     function modifyChannel(&$oChannelInfo)
@@ -1257,12 +1265,12 @@ class OpenAdsV2ApiXmlRpc
      * This method returns ChannelInfo for a specified channel.
      *
      * @param int $channelId
-     * @return OA_Dll_ChannelInfo
+     * @return ChannelInfo
      */
     function getChannel($channelId)
     {
         $dataChannel = $this->_sendWithSession('ox.getChannel', [(int)$channelId]);
-        $oChannelInfo = new OA_Dll_ChannelInfo();
+        $oChannelInfo = new ChannelInfo();
         $oChannelInfo->readDataFromArray($dataChannel);
 
         return $oChannelInfo;
@@ -1273,14 +1281,14 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param int $websiteId
      *
-     * @return array  array OA_Dll_ChannelInfo objects
+     * @return array  array ChannelInfo objects
      */
     function getChannelListByWebsiteId($websiteId)
     {
         $dataChannelList = $this->_sendWithSession('ox.getChannelListByWebsiteId', [(int)$websiteId]);
         $returnData = [];
         foreach ($dataChannelList as $dataChannel) {
-            $oChannelInfo = new OA_Dll_ChannelInfo();
+            $oChannelInfo = new ChannelInfo();
             $oChannelInfo->readDataFromArray($dataChannel);
             $returnData[] = $oChannelInfo;
         }
@@ -1293,14 +1301,14 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param int $agencyId
      *
-     * @return array  array OA_Dll_ChannelInfo objects
+     * @return array  array ChannelInfo objects
      */
     function getChannelListByAgencyId($agencyId)
     {
         $dataChannelList = $this->_sendWithSession('ox.getChannelListByAgencyId', [(int)$agencyId]);
         $returnData = [];
         foreach ($dataChannelList as $dataChannel) {
-            $oChannelInfo = new OA_Dll_ChannelInfo();
+            $oChannelInfo = new ChannelInfo();
             $oChannelInfo->readDataFromArray($dataChannel);
             $returnData[] = $oChannelInfo;
         }
@@ -1332,7 +1340,7 @@ class OpenAdsV2ApiXmlRpc
         $dataChannelTargetingList = $this->_sendWithSession('ox.getChannelTargeting', [(int)$channelId]);
         $returnData = [];
         foreach ($dataChannelTargetingList as $dataChannelTargeting) {
-            $oChannelTargetingInfo = new OA_Dll_TargetingInfo();
+            $oChannelTargetingInfo = new TargetingInfo();
             $oChannelTargetingInfo->readDataFromArray($dataChannelTargeting);
             $returnData[] = $oChannelTargetingInfo;
         }
@@ -1353,7 +1361,7 @@ class OpenAdsV2ApiXmlRpc
     {
         $aTargetingInfoObjects = [];
         foreach ($aTargeting as $aTargetingArray) {
-            $oTargetingInfo = new OA_Dll_TargetingInfo();
+            $oTargetingInfo = new TargetingInfo();
             $oTargetingInfo->readDataFromArray($aTargetingArray);
             $aTargetingInfoObjects[] = $oTargetingInfo;
         }
@@ -1364,7 +1372,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method adds a variable to the variable object.
      *
-     * @param OA_Dll_VariableInfo $oVariableInfo
+     * @param VariableInfo $oVariableInfo
      * @return mixed result
      */
     function addVariable(&$oVariableInfo)
@@ -1375,7 +1383,7 @@ class OpenAdsV2ApiXmlRpc
     /**
      * This method modifies a variable.
      *
-     * @param OA_Dll_VariableInfo $oVariableInfo
+     * @param VariableInfo $oVariableInfo
      * @return mixed result
      */
     function modifyVariable(&$oVariableInfo)
@@ -1387,12 +1395,12 @@ class OpenAdsV2ApiXmlRpc
      * This method returns VariableInfo for a specified variable.
      *
      * @param int $variableId
-     * @return OA_Dll_VariableInfo
+     * @return VariableInfo
      */
     function getVariable($variableId)
     {
         $dataVariable = $this->_sendWithSession('ox.getVariable', [(int)$variableId]);
-        $oVariableInfo = new OA_Dll_VariableInfo();
+        $oVariableInfo = new VariableInfo();
         $oVariableInfo->readDataFromArray($dataVariable);
 
         return $oVariableInfo;

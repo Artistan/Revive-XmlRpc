@@ -13,11 +13,11 @@
 namespace Artistan\ReviveXmlRpc;
 
 /**
- * The OA_Dll_VariableInfo class extends the base OA_Info class and contains
+ * The VariableInfo class extends the base Info class and contains
  * information about variable
  *
  */
-class OA_Dll_VariableInfo extends OA_Info
+class VariableInfo extends Info
 {
     const VARIABLE_DATATYPE_NUMERIC = 'numeric';
     const VARIABLE_DATATYPE_STRING = 'string';
