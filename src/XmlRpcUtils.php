@@ -12,6 +12,8 @@
 
 namespace Artistan\ReviveXmlRpc;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use PhpXmlRpc\Value;
 
 /**
@@ -63,12 +65,34 @@ class XmlRpcUtils
                     die('Value should be valid object which implements DateTimeInterface with format method');
                 }
                 /** @var \DateTimeInterface $variable */
-                $value = $variable->format('YmdTH:i:S');
+                $value = $variable->format('Ymd\TH:i:S');
 
                 return new Value($value, 'dateTime.iso8601');
             case 'custom':
                 return $variable;
         }
         die('Unsupported Xml Rpc type \''.$type.'\'');
+    }
+
+    /**
+     * @param mixed $date
+     * @return \Carbon\Carbon|null
+     */
+    public static function dateObject($date)
+    {
+        if (! is_a($date, 'DateTimeInterface')) {
+            if (is_object($date) && method_exists($date, 'format')) {
+                Log::info('attempting to convert date object...');
+                $date = Carbon::parse($date->format('Y-m-d H:i:s'));
+            } else {
+                if (is_string($date)) {
+                    $date = Carbon::parse($date);
+                } else {
+                    $date = null;
+                }
+            }
+        }
+
+        return $date;
     }
 }

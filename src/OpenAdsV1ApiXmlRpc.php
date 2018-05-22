@@ -129,7 +129,7 @@ class OpenAdsV1ApiXmlRpc
             } else {
                 if(is_a($element, 'DateTimeInterface')) {
                     /** @var \DateTimeInterface $element */
-                    $value = $element->format('YmdTH:M:S');
+                    $value = $element->format('Ymd\TH:i:s');
                     $dataMessage[] = new Value($value, 'dateTime.iso8601');
                 } else {
                     $dataMessage[] = $encoder->encode($element);
@@ -188,14 +188,12 @@ class OpenAdsV1ApiXmlRpc
      */
     function _callStatisticsMethod($serviceFileName, $methodName, $entityId, $oStartDate = null, $oEndDate = null)
     {
-        $dataArray = [(int)$entityId];
-        if (is_object($oStartDate)) {
-            $dataArray[] = $oStartDate->format('YmdTH:M:S');
+        $dataArray = [
+            (int)$entityId,
+            XmlRpcUtils::dateObject($oStartDate),
+            XmlRpcUtils::dateObject($oEndDate)
+        ];
 
-            if (is_object($oEndDate)) {
-                $dataArray[] = $oEndDate->format('YmdTH:M:S');
-            }
-        }
 
         $statisticsData = $this->_sendWithSession($serviceFileName, $methodName, $dataArray);
 

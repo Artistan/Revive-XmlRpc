@@ -150,7 +150,7 @@ class OpenAdsV2ApiXmlRpc
             } else {
                 if(is_a($element, 'DateTimeInterface')) {
                     /** @var \DateTimeInterface $element */
-                    $value = $element->format('YmdTH:M:S');
+                    $value = $element->format('Ymd\TH:i:s');
                     $dataMessage[] = new Value($value, 'dateTime.iso8601');
                 } else {
                     $dataMessage[] = $encoder->encode($element);
@@ -168,7 +168,6 @@ class OpenAdsV2ApiXmlRpc
         if ($response && $response->faultCode() == 0) {
             $result = $encoder->decode($response->value());
         } else {
-            dd($dataMessage);
             trigger_error('XML-RPC Error ('.$response->faultCode().'): '.$response->faultString().' in method '.$method.'()',
                 E_USER_ERROR);
         }
@@ -206,6 +205,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oStartDate
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
+     * @throws \Exception
      * @return array  result data
      */
     function _callStatisticsMethod(
@@ -215,16 +215,13 @@ class OpenAdsV2ApiXmlRpc
         $oEndDate = null,
         $useManagerTimezone = false
     ) {
-        $dataArray = [(int)$entityId];
-        if (is_object($oStartDate)) {
-            $dataArray[] = $oStartDate->format('YmdTH:M:S');
+        $dataArray = [
+            (int)$entityId,
+            XmlRpcUtils::dateObject($oStartDate),
+            XmlRpcUtils::dateObject($oEndDate),
+            (bool)$useManagerTimezone
+        ];
 
-            if (is_object($oEndDate)) {
-                $dataArray[] = $oEndDate->format('YmdTH:M:S');
-            }
-        }
-
-        $dataArray[] = (bool)$useManagerTimezone;
         $statisticsData = $this->_sendWithSession($methodName, $dataArray);
 
         return $statisticsData;
