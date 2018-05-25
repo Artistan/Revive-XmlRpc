@@ -12,6 +12,7 @@
 
 namespace Artistan\ReviveXmlRpc;
 
+
 /**
  * The TargetingInfo class extends the base Info class and contains
  * information about targeting
@@ -47,7 +48,6 @@ class TargetingInfo extends Info
      * @var string
      */
     public $data;
-
 
     function getFieldsTypes()
     {
