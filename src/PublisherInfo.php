@@ -75,6 +75,14 @@ class PublisherInfo extends Info
      */
     var $comments;
 
+    /**
+     * This method returns an array of fields with their corresponding types.
+     * @see \Artistan\ReviveXmlRpc\Info::getFieldsTypes()
+     *
+     * @access public
+     *
+     * @return array
+     */
     function getFieldsTypes()
     {
         return [

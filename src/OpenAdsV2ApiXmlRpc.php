@@ -1386,6 +1386,7 @@ class OpenAdsV2ApiXmlRpc
      *
      * @param integer $channelId
      * @param array $aTargeting
+     * @see \Artistan\ReviveXmlRpc\TargetingInfo
      *
      * @return bool
      */

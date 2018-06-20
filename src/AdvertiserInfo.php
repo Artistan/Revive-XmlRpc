@@ -15,12 +15,15 @@ namespace Artistan\ReviveXmlRpc;
 /**
  *  The AdvertiserInfo class extends the base Info class and contains information about advertisers.
  *
+ *  Advertiser is the
  */
 
 class AdvertiserInfo extends Info
 {
     /**
      * The advertiserID variable is the unique ID for the advertiser.
+     *
+     * @see https://documentation.revive-adserver.com/display/DOCS/Advertisers
      *
      * @var integer $advertiserId
      */
@@ -68,6 +71,14 @@ class AdvertiserInfo extends Info
      */
     var $comments;
 
+    /**
+     * This method returns an array of fields with their corresponding types.
+     * @see \Artistan\ReviveXmlRpc\Info::getFieldsTypes()
+     *
+     * @access public
+     *
+     * @return array
+     */
     function getFieldsTypes()
     {
         return [

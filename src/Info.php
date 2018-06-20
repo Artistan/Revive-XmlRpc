@@ -32,7 +32,12 @@ abstract class Info
     }
 
     /**
-     * @param $aEntityData
+     * create/build $this from array data
+     *
+     * @see \Artistan\ReviveXmlRpc\Info::getFieldsTypes();
+     * @see \Artistan\ReviveXmlRpc\Info::getFieldType($fieldName);
+     *
+     * @param array $aEntityData ['fieldName' +> 'RPCdataType', ...]
      */
     function readDataFromArray($aEntityData)
     {
@@ -49,11 +54,17 @@ abstract class Info
     }
 
     /**
-     * @return array
+     * get field type definition
+     *
+     * @see \Artistan\ReviveXmlRpc\XmlRpcUtils::getRPCTypeForField()
+     *
+     * @return array ['fieldName' +> 'RPCdataType', ...]
      */
     abstract function getFieldsTypes();
 
     /**
+     * get RPCdataType for field
+     *
      * @param $fieldName
      * @return mixed
      */

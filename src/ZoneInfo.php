@@ -150,6 +150,7 @@ class ZoneInfo extends Info
 
     /**
      * This method returns an array of fields with their corresponding types.
+     * @see \Artistan\ReviveXmlRpc\Info::getFieldsTypes()
      *
      * @access public
      *
