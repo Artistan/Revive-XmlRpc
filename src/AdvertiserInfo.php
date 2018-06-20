@@ -19,7 +19,6 @@ namespace Artistan\ReviveXmlRpc;
 
 class AdvertiserInfo extends Info
 {
-
     /**
      * The advertiserID variable is the unique ID for the advertiser.
      *
@@ -71,14 +70,14 @@ class AdvertiserInfo extends Info
 
     function getFieldsTypes()
     {
-        return array(
-                    'advertiserId' => 'integer',
-                    'accountId' => 'integer',
-                    'agencyId' => 'integer',
-                    'advertiserName' => 'string',
-                    'contactName' => 'string',
-                    'emailAddress' => 'string',
-                    'comments' => 'string',
-                );
+        return [
+            'advertiserId' => 'integer',
+            'accountId' => 'integer',
+            'agencyId' => 'integer',
+            'advertiserName' => 'string',
+            'contactName' => 'string',
+            'emailAddress' => 'string',
+            'comments' => 'string',
+        ];
     }
 }

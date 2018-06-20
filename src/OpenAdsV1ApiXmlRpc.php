@@ -83,31 +83,15 @@ class OpenAdsV1ApiXmlRpc
     }
 
     /**
-     * A private method to return an Client to the API service
+     * This method logs on to web services.
      *
-     * @param string $service
-     * @return \PhpXmlRpc\Client
+     * @return boolean "Was the remote logon() call successful?"
      */
-    function &_getClient($service)
+    function _logon()
     {
-        $oClient = new Client($this->basepath.'/'.$service.$this->debug, $this->host, $this->port,
-            $this->ssl ? 'https' : 'http');
+        $this->sessionId = $this->_send('LogonXmlRpcService.php', 'logon', [$this->username, $this->password]);
 
-        return $oClient;
-    }
-
-    /**
-     * This private function sends a method call and $data to a specified service and automatically
-     * adds the value of the sessionID.
-     *
-     * @param string $service The name of the remote service file.
-     * @param string $method The name of the remote method to call.
-     * @param mixed $data The data to send to the web service.
-     * @return mixed The response from the server or false in the event of failure.
-     */
-    function _sendWithSession($service, $method, $data = [])
-    {
-        return $this->_send($service, $method, array_merge([$this->sessionId], $data));
+        return true;
     }
 
     /**
@@ -127,7 +111,7 @@ class OpenAdsV1ApiXmlRpc
             if (is_object($element) && is_subclass_of($element, 'Artistan\ReviveXmlRpc\Info')) {
                 $dataMessage[] = XmlRpcUtils::getEntityWithNotNullFields($element);
             } else {
-                if(is_a($element, 'DateTimeInterface')) {
+                if (is_a($element, 'DateTimeInterface')) {
                     /** @var \DateTimeInterface $element */
                     $value = $element->format('Ymd\TH:i:s');
                     $dataMessage[] = new Value($value, 'dateTime.iso8601');
@@ -155,15 +139,17 @@ class OpenAdsV1ApiXmlRpc
     }
 
     /**
-     * This method logs on to web services.
+     * A private method to return an Client to the API service
      *
-     * @return boolean "Was the remote logon() call successful?"
+     * @param string $service
+     * @return \PhpXmlRpc\Client
      */
-    function _logon()
+    function &_getClient($service)
     {
-        $this->sessionId = $this->_send('LogonXmlRpcService.php', 'logon', [$this->username, $this->password]);
+        $oClient = new Client($this->basepath.'/'.$service.$this->debug, $this->host, $this->port,
+            $this->ssl ? 'https' : 'http');
 
-        return true;
+        return $oClient;
     }
 
     /**
@@ -177,27 +163,17 @@ class OpenAdsV1ApiXmlRpc
     }
 
     /**
-     * This method returns statistics for an entity.
+     * This private function sends a method call and $data to a specified service and automatically
+     * adds the value of the sessionID.
      *
-     * @param string $serviceFileName
-     * @param string $methodName
-     * @param int $entityId
-     * @param \Carbon\Carbon $oStartDate
-     * @param \Carbon\Carbon $oEndDate
-     * @return array  result data
+     * @param string $service The name of the remote service file.
+     * @param string $method The name of the remote method to call.
+     * @param mixed $data The data to send to the web service.
+     * @return mixed The response from the server or false in the event of failure.
      */
-    function _callStatisticsMethod($serviceFileName, $methodName, $entityId, $oStartDate = null, $oEndDate = null)
+    function _sendWithSession($service, $method, $data = [])
     {
-        $dataArray = [
-            (int)$entityId,
-            XmlRpcUtils::dateObject($oStartDate),
-            XmlRpcUtils::dateObject($oEndDate)
-        ];
-
-
-        $statisticsData = $this->_sendWithSession($serviceFileName, $methodName, $dataArray);
-
-        return $statisticsData;
+        return $this->_send($service, $method, array_merge([$this->sessionId], $data));
     }
 
     /**
@@ -267,6 +243,20 @@ class OpenAdsV1ApiXmlRpc
     }
 
     /**
+     * This method returns the daily statistics for an agency for a specified time period.
+     *
+     * @param int $agencyId
+     * @param \Carbon\Carbon $oStartDate
+     * @param \Carbon\Carbon $oEndDate
+     * @return array  result data
+     */
+    function agencyDailyStatistics($agencyId, $oStartDate = null, $oEndDate = null)
+    {
+        return $this->_dailyStatistics('AgencyXmlRpcService.php', 'agencyDailyStatistics', $agencyId, $oStartDate,
+            $oEndDate);
+    }
+
+    /**
      * @param $serviceFileName
      * @param $methodName
      * @param $agencyId
@@ -288,17 +278,26 @@ class OpenAdsV1ApiXmlRpc
     }
 
     /**
-     * This method returns the daily statistics for an agency for a specified time period.
+     * This method returns statistics for an entity.
      *
-     * @param int $agencyId
+     * @param string $serviceFileName
+     * @param string $methodName
+     * @param int $entityId
      * @param \Carbon\Carbon $oStartDate
      * @param \Carbon\Carbon $oEndDate
      * @return array  result data
      */
-    function agencyDailyStatistics($agencyId, $oStartDate = null, $oEndDate = null)
+    function _callStatisticsMethod($serviceFileName, $methodName, $entityId, $oStartDate = null, $oEndDate = null)
     {
-        return $this->_dailyStatistics('AgencyXmlRpcService.php', 'agencyDailyStatistics', $agencyId, $oStartDate,
-            $oEndDate);
+        $dataArray = [
+            (int)$entityId,
+            XmlRpcUtils::dateObject($oStartDate),
+            XmlRpcUtils::dateObject($oEndDate),
+        ];
+
+        $statisticsData = $this->_sendWithSession($serviceFileName, $methodName, $dataArray);
+
+        return $statisticsData;
     }
 
     /**

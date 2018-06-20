@@ -155,7 +155,8 @@ class CampaignInfo extends Info
      * This function sets all default values when adding new campaign.
      *
      */
-    function setDefaultForAdd() {
+    function setDefaultForAdd()
+    {
         if (is_null($this->impressions)) {
             $this->impressions = -1;
         }
@@ -218,25 +219,25 @@ class CampaignInfo extends Info
      */
     function getFieldsTypes()
     {
-        return array(
-                    'campaignId' => 'integer',
-                    'advertiserId' => 'integer',
-                    'campaignName' => 'string',
-                    'startDate' => 'date',
-                    'endDate' => 'date',
-                    'impressions' => 'integer',
-                    'clicks' => 'integer',
-                    'priority' => 'integer',
-                    'weight' => 'integer',
-                    'targetImpressions' => 'integer',
-                    'targetClicks' => 'integer',
-                    'targetConversions' => 'integer',
-                    'revenue' => 'double',
-                    'revenueType' => 'integer',
-                    'capping' => 'integer',
-                    'sessionCapping' => 'integer',
-                    'block' => 'integer',
-                    'comments' => 'string',
-                );
+        return [
+            'campaignId' => 'integer',
+            'advertiserId' => 'integer',
+            'campaignName' => 'string',
+            'startDate' => 'date',
+            'endDate' => 'date',
+            'impressions' => 'integer',
+            'clicks' => 'integer',
+            'priority' => 'integer',
+            'weight' => 'integer',
+            'targetImpressions' => 'integer',
+            'targetClicks' => 'integer',
+            'targetConversions' => 'integer',
+            'revenue' => 'double',
+            'revenueType' => 'integer',
+            'capping' => 'integer',
+            'sessionCapping' => 'integer',
+            'block' => 'integer',
+            'comments' => 'string',
+        ];
     }
 }

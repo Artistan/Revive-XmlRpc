@@ -41,7 +41,7 @@ class OpenAdsV2ApiXmlRpc
 
     var $ssl;
 
-    var $config=[];
+    var $config = [];
 
     /**
      * The sessionId is set by the logon() method called during the constructor.
@@ -74,62 +74,58 @@ class OpenAdsV2ApiXmlRpc
      * @param bool $ssl Set to true to connect using an SSL connection.
      * @param int $timeout The timeout period to wait for a response.
      */
-    function __construct($host_config=null, $basepath=null, $username=null, $password=null, $port = null, $ssl = null, $timeout = null)
-    {
-        if(is_array($host_config)) {
+    function __construct(
+        $host_config = null,
+        $basepath = null,
+        $username = null,
+        $password = null,
+        $port = null,
+        $ssl = null,
+        $timeout = null
+    ) {
+        if (is_array($host_config)) {
             $this->load_config($host_config);
-            $host_config=null;
+            $host_config = null;
         }
-        $this->host = $host_config??$this->config('host');
-        $this->basepath = rtrim($basepath??$this->config('basepath'), '/');
-        $this->port = $port??$this->config('port',0);
-        $this->timeout = $timeout??$this->config('timeout',15);
-        $this->username = $username??$this->config('username');
-        $this->password = $password??$this->config('password');
-        $this->ssl = $ssl??$this->config('ssl',false);
+        $this->host = $host_config ?? $this->config('host');
+        $this->basepath = rtrim($basepath ?? $this->config('basepath'), '/');
+        $this->port = $port ?? $this->config('port', 0);
+        $this->timeout = $timeout ?? $this->config('timeout', 15);
+        $this->username = $username ?? $this->config('username');
+        $this->password = $password ?? $this->config('password');
+        $this->ssl = $ssl ?? $this->config('ssl', false);
         $this->_logon();
     }
 
-    function load_config($config) {
+    function load_config($config)
+    {
         $this->config = $config;
     }
 
-    function config($key,$default=null) {
-        if(function_exists('config')) {
+    function config($key, $default = null)
+    {
+        if (function_exists('config')) {
             // allow laravel type loading configs from project
             return config('revive-xmlrpc.'.$key, $default);
         }
-        if(empty($this->config)) {
+        if (empty($this->config)) {
             // get the configs directly from the config file if not set already.
             $this->config = require __DIR__.'/Assets/Config/revive-xmlrpc.php';
         }
-        return $this->config[$key]??$default;
+
+        return $this->config[$key] ?? $default;
     }
 
     /**
-     * A private method to return an Client to the API service
+     * This method logs on to web services.
      *
-     * @return \PhpXmlRpc\Client
+     * @return boolean "Was the remote logon() call successful?"
      */
-    function &_getClient()
+    function _logon()
     {
-        $oClient = new Client($this->basepath.'/'.$this->debug, $this->host, $this->port,
-            $this->ssl ? 'https' : 'http');
+        $this->sessionId = $this->_send('ox.logon', [$this->username, $this->password]);
 
-        return $oClient;
-    }
-
-    /**
-     * This private function sends a method call and $data to a specified service and automatically
-     * adds the value of the sessionID.
-     *
-     * @param string $method The name of the remote method to call.
-     * @param mixed $data The data to send to the web service.
-     * @return mixed The response from the server or false in the event of failure.
-     */
-    function _sendWithSession($method, $data = [])
-    {
-        return $this->_send($method, array_merge([$this->sessionId], $data));
+        return true;
     }
 
     /**
@@ -148,7 +144,7 @@ class OpenAdsV2ApiXmlRpc
             if (is_object($element) && is_subclass_of($element, 'Artistan\ReviveXmlRpc\Info')) {
                 $dataMessage[] = XmlRpcUtils::getEntityWithNotNullFields($element);
             } else {
-                if(is_a($element, 'DateTimeInterface')) {
+                if (is_a($element, 'DateTimeInterface')) {
                     /** @var \DateTimeInterface $element */
                     $value = $element->format('Ymd\TH:i:s');
                     $dataMessage[] = new Value($value, 'dateTime.iso8601');
@@ -176,15 +172,16 @@ class OpenAdsV2ApiXmlRpc
     }
 
     /**
-     * This method logs on to web services.
+     * A private method to return an Client to the API service
      *
-     * @return boolean "Was the remote logon() call successful?"
+     * @return \PhpXmlRpc\Client
      */
-    function _logon()
+    function &_getClient()
     {
-        $this->sessionId = $this->_send('ox.logon', [$this->username, $this->password]);
+        $oClient = new Client($this->basepath.'/'.$this->debug, $this->host, $this->port,
+            $this->ssl ? 'https' : 'http');
 
-        return true;
+        return $oClient;
     }
 
     /**
@@ -198,33 +195,16 @@ class OpenAdsV2ApiXmlRpc
     }
 
     /**
-     * This method returns statistics for an entity.
+     * This private function sends a method call and $data to a specified service and automatically
+     * adds the value of the sessionID.
      *
-     * @param string $methodName
-     * @param int $entityId
-     * @param \Carbon\Carbon $oStartDate
-     * @param \Carbon\Carbon $oEndDate
-     * @param boolean $useManagerTimezone
-     * @throws \Exception
-     * @return array  result data
+     * @param string $method The name of the remote method to call.
+     * @param mixed $data The data to send to the web service.
+     * @return mixed The response from the server or false in the event of failure.
      */
-    function _callStatisticsMethod(
-        $methodName,
-        $entityId,
-        $oStartDate = null,
-        $oEndDate = null,
-        $useManagerTimezone = false
-    ) {
-        $dataArray = [
-            (int)$entityId,
-            XmlRpcUtils::dateObject($oStartDate),
-            XmlRpcUtils::dateObject($oEndDate),
-            (bool)$useManagerTimezone
-        ];
-
-        $statisticsData = $this->_sendWithSession($methodName, $dataArray);
-
-        return $statisticsData;
+    function _sendWithSession($method, $data = [])
+    {
+        return $this->_send($method, array_merge([$this->sessionId], $data));
     }
 
     /**
@@ -313,6 +293,36 @@ class OpenAdsV2ApiXmlRpc
         foreach ($statisticsData as $key => $data) {
             $statisticsData[$key]['day'] = \Carbon\Carbon::parse($data['day'])->format('Y-m-d');
         }
+
+        return $statisticsData;
+    }
+
+    /**
+     * This method returns statistics for an entity.
+     *
+     * @param string $methodName
+     * @param int $entityId
+     * @param \Carbon\Carbon $oStartDate
+     * @param \Carbon\Carbon $oEndDate
+     * @param boolean $useManagerTimezone
+     * @throws \Exception
+     * @return array  result data
+     */
+    function _callStatisticsMethod(
+        $methodName,
+        $entityId,
+        $oStartDate = null,
+        $oEndDate = null,
+        $useManagerTimezone = false
+    ) {
+        $dataArray = [
+            (int)$entityId,
+            XmlRpcUtils::dateObject($oStartDate),
+            XmlRpcUtils::dateObject($oEndDate),
+            (bool)$useManagerTimezone,
+        ];
+
+        $statisticsData = $this->_sendWithSession($methodName, $dataArray);
 
         return $statisticsData;
     }
@@ -1491,7 +1501,7 @@ class OpenAdsV2ApiXmlRpc
      *     invocationTags:oxInvocationTags:local
      *     invocationTags:oxInvocationTags:popup
      *     invocationTags:oxInvocationTags:xmlrpc
-     * @param array  $aParams          Input parameters, if null globals will be fetched
+     * @param array $aParams Input parameters, if null globals will be fetched
      * @return bool
      */
     function generateTags($zoneId, $codeType, $aParams = null)

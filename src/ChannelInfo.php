@@ -19,7 +19,6 @@ namespace Artistan\ReviveXmlRpc;
 
 class ChannelInfo extends Info
 {
-
     /**
      * The channelID variable is the unique ID for the channel.
      *
@@ -69,13 +68,13 @@ class ChannelInfo extends Info
 
     function getFieldsTypes()
     {
-        return array(
+        return [
             'channelId' => 'integer',
             'agencyId' => 'integer',
             'websiteId' => 'integer',
             'channelName' => 'string',
             'description' => 'string',
             'comments' => 'string',
-        );
+        ];
     }
 }

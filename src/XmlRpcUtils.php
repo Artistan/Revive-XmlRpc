@@ -55,6 +55,7 @@ class XmlRpcUtils
         switch ($type) {
             case 'integer':
                 $type = 'int';
+
                 return new Value($variable, $type);
             case 'string':
             case 'float':

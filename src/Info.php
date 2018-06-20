@@ -19,17 +19,32 @@ use Carbon\Carbon;
  *
  * The Info class is the base class for all info classes.
  */
-
-
 abstract class Info
 {
     /**
      * @param array $aEntityData
      */
-    function __construct(array $aEntityData=[])
+    function __construct(array $aEntityData = [])
     {
-        if(!empty($aEntityData)){
+        if (! empty($aEntityData)) {
             $this->readDataFromArray($aEntityData);
+        }
+    }
+
+    /**
+     * @param $aEntityData
+     */
+    function readDataFromArray($aEntityData)
+    {
+        $aFieldsTypes = $this->getFieldsTypes();
+        foreach ($aFieldsTypes as $fieldName => $fieldType) {
+            if (array_key_exists($fieldName, $aEntityData)) {
+                if ($fieldType == 'date') {
+                    $this->$fieldName = Carbon::parse($aEntityData[$fieldName]);
+                } else {
+                    $this->$fieldName = $aEntityData[$fieldName];
+                }
+            }
         }
     }
 
@@ -45,31 +60,15 @@ abstract class Info
     function getFieldType($fieldName)
     {
         $aFieldsTypes = $this->getFieldsTypes();
-        if (!isset($aFieldsTypes) || !is_array($aFieldsTypes)) {
+        if (! isset($aFieldsTypes) || ! is_array($aFieldsTypes)) {
             die('Please provide field types array for Info object creation');
         }
 
-        if (!array_key_exists($fieldName, $aFieldsTypes)) {
-            die('Unknown type for field \'' . $fieldName .'\'');
+        if (! array_key_exists($fieldName, $aFieldsTypes)) {
+            die('Unknown type for field \''.$fieldName.'\'');
         }
-        return $aFieldsTypes[$fieldName];
-    }
 
-    /**
-     * @param $aEntityData
-     */
-    function readDataFromArray($aEntityData)
-    {
-        $aFieldsTypes = $this->getFieldsTypes();
-        foreach($aFieldsTypes as $fieldName => $fieldType) {
-            if (array_key_exists($fieldName, $aEntityData)) {
-                if ($fieldType == 'date') {
-                    $this->$fieldName = Carbon::parse($aEntityData[$fieldName]);
-                } else {
-                    $this->$fieldName = $aEntityData[$fieldName];
-                }
-            }
-        }
+        return $aFieldsTypes[$fieldName];
     }
 
     /**

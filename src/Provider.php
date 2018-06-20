@@ -18,7 +18,7 @@ class Provider extends ServiceProvider
     public function boot()
     {
         // laravel function to publish configuration assets
-        if(function_exists('base_path')) {
+        if (function_exists('base_path')) {
             $this->publishes([
                 __DIR__.'/Assets/Config' => base_path('config'),
             ]);

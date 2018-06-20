@@ -71,14 +71,14 @@ class UserInfo extends Info
 
     function getFieldsTypes()
     {
-        return array(
-                    'userId' => 'integer',
-                    'contactName' => 'string',
-                    'emailAddress' => 'string',
-                    'username' => 'string',
-                    'password' => 'string',
-                    'defaultAccountId' => 'integer',
-                    'active' => 'integer',
-                );
+        return [
+            'userId' => 'integer',
+            'contactName' => 'string',
+            'emailAddress' => 'string',
+            'username' => 'string',
+            'password' => 'string',
+            'defaultAccountId' => 'integer',
+            'active' => 'integer',
+        ];
     }
 }

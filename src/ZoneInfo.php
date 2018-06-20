@@ -19,8 +19,6 @@ namespace Artistan\ReviveXmlRpc;
 
 class ZoneInfo extends Info
 {
-
-
     /**
      * The zoneId variable is the unique ID for the zone.
      *
@@ -119,7 +117,8 @@ class ZoneInfo extends Info
      * @access public
      *
      */
-    function setDefaultForAdd() {
+    function setDefaultForAdd()
+    {
         if (is_null($this->type)) {
             $this->type = 0;
         }
@@ -158,21 +157,21 @@ class ZoneInfo extends Info
      */
     function getFieldsTypes()
     {
-        return array(
-                    'zoneId' => 'integer',
-                    'publisherId' => 'integer',
-                    'zoneName' => 'string',
-                    'type' => 'integer',
-                    'width' => 'integer',
-                    'height' => 'integer',
-                    'capping' => 'integer',
-                    'sessionCapping' => 'integer',
-                    'block' => 'integer',
-                    'comments' => 'string',
-                    'append' => 'string',
-                    'prepend' => 'string',
-                    'chainedZoneId' => 'integer',
-                );
+        return [
+            'zoneId' => 'integer',
+            'publisherId' => 'integer',
+            'zoneName' => 'string',
+            'type' => 'integer',
+            'width' => 'integer',
+            'height' => 'integer',
+            'capping' => 'integer',
+            'sessionCapping' => 'integer',
+            'block' => 'integer',
+            'comments' => 'string',
+            'append' => 'string',
+            'prepend' => 'string',
+            'chainedZoneId' => 'integer',
+        ];
     }
 }
 

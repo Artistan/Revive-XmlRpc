@@ -18,10 +18,8 @@ use PhpXmlRpc\Value;
  *  The BannerInfo class extends the base Info class and contains information about the banner.
  *
  */
-
 class BannerInfo extends Info
 {
-
     /**
      * The bannerID variable is the unique ID of the banner.
      *
@@ -207,7 +205,8 @@ class BannerInfo extends Info
      * @access public
      *
      */
-    function setDefaultForAdd() {
+    function setDefaultForAdd()
+    {
         if (is_null($this->storageType)) {
             $this->storageType = 'sql';
         }
@@ -228,7 +227,7 @@ class BannerInfo extends Info
             $this->status = 0;
         }
 
-        if (!isset($this->transparent)) {
+        if (! isset($this->transparent)) {
             $this->transparent = false;
         }
         /*
@@ -246,15 +245,6 @@ class BannerInfo extends Info
         */
     }
 
-    function encodeImage($aImage)
-    {
-        return new Value(array(
-            'filename' => new Value($aImage['filename']),
-            'content'  => new Value($aImage['content'], 'base64'),
-            'editswf'  => new Value(!empty($aImage['editswf']), 'boolean'),
-        ), 'struct');
-    }
-
     function toArray()
     {
         $aInfo = parent::toArray();
@@ -264,7 +254,17 @@ class BannerInfo extends Info
         if (isset($this->aBackupImage)) {
             $aInfo['aBackupImage'] = $this->encodeImage($this->aBackupImage);
         }
+
         return $aInfo;
+    }
+
+    function encodeImage($aImage)
+    {
+        return new Value([
+            'filename' => new Value($aImage['filename']),
+            'content' => new Value($aImage['content'], 'base64'),
+            'editswf' => new Value(! empty($aImage['editswf']), 'boolean'),
+        ], 'struct');
     }
 
     /**
@@ -276,33 +276,33 @@ class BannerInfo extends Info
      */
     function getFieldsTypes()
     {
-        return array(
-                    'bannerId' => 'integer',
-                    'campaignId' => 'integer',
-                    'bannerName' => 'string',
-                    'storageType' => 'string',
-                    'imageURL' => 'string',
-                    'htmlTemplate' => 'string',
-                    'width' => 'integer',
-                    'height' => 'integer',
-                    'weight' => 'integer',
-                    'target' => 'string',
-                    'url' => 'string',
-                    'bannerText' => 'string',
-                    'status' => 'integer',
-                    'adserver' => 'string',
-                    'transparent' => 'integer',
-                    'capping' => 'integer',
-                    'sessionCapping' => 'integer',
-                    'block' => 'integer',
-                    'aImage' => 'custom',
-                    'aBackupImage' => 'custom',
-                    'comments' => 'string',
-                    'alt' => 'string',
-                    'filename' => 'string',
-                    'append' => 'string',
-                    'prepend' => 'string',
-                );
+        return [
+            'bannerId' => 'integer',
+            'campaignId' => 'integer',
+            'bannerName' => 'string',
+            'storageType' => 'string',
+            'imageURL' => 'string',
+            'htmlTemplate' => 'string',
+            'width' => 'integer',
+            'height' => 'integer',
+            'weight' => 'integer',
+            'target' => 'string',
+            'url' => 'string',
+            'bannerText' => 'string',
+            'status' => 'integer',
+            'adserver' => 'string',
+            'transparent' => 'integer',
+            'capping' => 'integer',
+            'sessionCapping' => 'integer',
+            'block' => 'integer',
+            'aImage' => 'custom',
+            'aBackupImage' => 'custom',
+            'comments' => 'string',
+            'alt' => 'string',
+            'filename' => 'string',
+            'append' => 'string',
+            'prepend' => 'string',
+        ];
     }
 }
 

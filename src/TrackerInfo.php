@@ -42,6 +42,7 @@ class TrackerInfo extends Info
     public $trackerName;
 
     // Optional fields
+
     /**
      * This field provides a place for a description to be stored.
      *
@@ -57,6 +58,7 @@ class TrackerInfo extends Info
      *     MAX_CONNECTION_STATUS_APPROVED:    4
      *     MAX_CONNECTION_STATUS_DISAPPROVED: 5
      *     MAX_CONNECTION_STATUS_DUPLICATE:   6
+     *
      * @var string $status
      */
     public $status;
@@ -86,10 +88,9 @@ class TrackerInfo extends Info
      */
     public $variableMethod;
 
-
     function getFieldsTypes()
     {
-        return array(
+        return [
             'trackerId' => 'integer',
             'clientId' => 'integer',
             'trackerName' => 'string',
@@ -97,7 +98,7 @@ class TrackerInfo extends Info
             'status' => 'integer',
             'type' => 'integer',
             'linkCampaigns' => 'boolean',
-            'variableMethod' => 'string'
-        );
+            'variableMethod' => 'string',
+        ];
     }
 }

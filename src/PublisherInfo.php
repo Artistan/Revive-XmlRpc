@@ -19,7 +19,6 @@ namespace Artistan\ReviveXmlRpc;
 
 class PublisherInfo extends Info
 {
-
     /**
      * The publisherId variable is the unique ID for the publisher.
      *
@@ -78,15 +77,15 @@ class PublisherInfo extends Info
 
     function getFieldsTypes()
     {
-        return array(
-                    'publisherId' => 'integer',
-                    'accountId' => 'integer',
-                    'agencyId' => 'integer',
-                    'publisherName' => 'string',
-                    'contactName' => 'string',
-                    'emailAddress' => 'string',
-                    'website' => 'string',
-                    'comments' => 'string',
-                );
+        return [
+            'publisherId' => 'integer',
+            'accountId' => 'integer',
+            'agencyId' => 'integer',
+            'publisherName' => 'string',
+            'contactName' => 'string',
+            'emailAddress' => 'string',
+            'website' => 'string',
+            'comments' => 'string',
+        ];
     }
 }

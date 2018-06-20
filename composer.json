@@ -1,35 +1,35 @@
 {
-  "name": "artistan/revive-xmlrpc",
-  "description": "package of the library classes to provide XmlRpc routines for accessing revive ad servers",
-  "homepage": "https://github.com/Artistan/revive-xmlrpc",
-  "type": "library",
-  "require": {
-    "phpxmlrpc/phpxmlrpc": "4.3.1",
-    "illuminate/support": "5.6.*"
-  },
-  "keywords": [
-    "revive",
-    "adsserver",
-    "api",
-    "xmlrpc"
-  ],
-  "license": "GPL-2.0-or-later",
-  "authors": [
-    {
-      "name": "Charles Peterson",
-      "email": "artistan@gmail.com"
+    "name": "artistan/revive-xmlrpc",
+    "description": "package of the library classes to provide XmlRpc routines for accessing revive ad servers",
+    "homepage": "https://github.com/Artistan/revive-xmlrpc",
+    "type": "library",
+    "require": {
+        "phpxmlrpc/phpxmlrpc": "4.3.1",
+        "illuminate/support": "5.6.*"
+    },
+    "keywords": [
+        "revive",
+        "adsserver",
+        "api",
+        "xmlrpc"
+    ],
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Charles Peterson",
+            "email": "artistan@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Artistan\\ReviveXmlRpc\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Artistan\\ReviveXmlRpc\\Provider"
+            ]
+        }
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Artistan\\ReviveXmlRpc\\": "src/"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Artistan\\ReviveXmlRpc\\Provider"
-      ]
-    }
-  }
 }

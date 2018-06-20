@@ -63,13 +63,13 @@ class AgencyInfo extends Info
 
     function getFieldsTypes()
     {
-        return array(
-                    'agencyId' => 'integer',
-                    'accountId' => 'integer',
-                    'agencyName' => 'string',
-                    'contactName' => 'string',
-                    'password' => 'string',
-                    'emailAddress' => 'string'
-                );
+        return [
+            'agencyId' => 'integer',
+            'accountId' => 'integer',
+            'agencyName' => 'string',
+            'contactName' => 'string',
+            'password' => 'string',
+            'emailAddress' => 'string',
+        ];
     }
 }
