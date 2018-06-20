@@ -34,7 +34,7 @@ class AgencyInfo extends Info
     var $accountId;
 
     /**
-     * The agencycName variable is the name of the agency.
+     * The agencyName variable is the name of the agency.
      *
      * @var string $agencyName
      */

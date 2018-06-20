@@ -303,6 +303,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function agencyDailyStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -324,6 +325,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function agencyAdvertiserStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -339,6 +341,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function agencyCampaignStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -354,6 +357,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function agencyBannerStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -369,6 +373,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function agencyPublisherStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -384,6 +389,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function agencyZoneStatistics($agencyId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -470,6 +476,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function advertiserDailyStatistics($advertiserId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -491,6 +498,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function advertiserCampaignStatistics(
         $advertiserId,
@@ -510,6 +518,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function advertiserBannerStatistics(
         $advertiserId,
@@ -529,6 +538,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function advertiserPublisherStatistics(
         $advertiserId,
@@ -548,6 +558,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function advertiserZoneStatistics($advertiserId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -634,6 +645,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function campaignDailyStatistics($campaignId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -655,6 +667,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function campaignBannerStatistics($campaignId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -670,6 +683,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function campaignPublisherStatistics($campaignId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -685,6 +699,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function campaignZoneStatistics($campaignId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -812,6 +827,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function bannerDailyStatistics($bannerId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -833,6 +849,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function bannerPublisherStatistics($bannerId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -848,6 +865,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function bannerZoneStatistics($bannerId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -930,6 +948,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function publisherDailyStatistics($publisherId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -951,6 +970,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function publisherZoneStatistics($publisherId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -966,6 +986,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function publisherAdvertiserStatistics(
         $publisherId,
@@ -985,6 +1006,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function publisherCampaignStatistics(
         $publisherId,
@@ -1004,6 +1026,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function publisherBannerStatistics($publisherId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -1178,6 +1201,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function zoneDailyStatistics($zoneId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -1199,6 +1223,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function zoneAdvertiserStatistics($zoneId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -1214,6 +1239,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function zoneCampaignStatistics($zoneId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {
@@ -1229,6 +1255,7 @@ class OpenAdsV2ApiXmlRpc
      * @param \Carbon\Carbon $oEndDate
      * @param boolean $useManagerTimezone
      * @return array  result data
+     * @throws \Exception
      */
     function zoneBannerStatistics($zoneId, $oStartDate = null, $oEndDate = null, $useManagerTimezone = false)
     {

@@ -4,6 +4,12 @@ namespace Artistan\ReviveXmlRpc;
 
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Class Provider
+ *
+ * @package Artistan\ReviveXmlRpc
+ * @
+ */
 class Provider extends ServiceProvider
 {
     /**
@@ -11,9 +17,12 @@ class Provider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__.'/Assets/Config' => base_path('config'),
-        ]);
+        // laravel function to publish configuration assets
+        if(function_exists('base_path')) {
+            $this->publishes([
+                __DIR__.'/Assets/Config' => base_path('config'),
+            ]);
+        }
     }
 
     /**

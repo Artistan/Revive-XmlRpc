@@ -123,29 +123,6 @@ class OpenAdsDisplayXmlRpc
         $context = [],
         $charset = ''
     ) {
-        // Prepare variables:
-        $aServerVars = [
-            'remote_addr' => 'REMOTE_ADDR',
-            'remote_host' => 'REMOTE_HOST',
-
-            // Declare headers used for ACLs:
-            'request_uri' => 'REQUEST_URI',
-            'https' => 'HTTPS',
-            'server_name' => 'SERVER_NAME',
-            'http_host' => 'HTTP_HOST',
-            'accept_language' => 'HTTP_ACCEPT_LANGUAGE',
-            'referer' => 'HTTP_REFERER',
-            'user_agent' => 'HTTP_USER_AGENT',
-
-            // Declase headers used for proxy lookup:
-            'via' => 'HTTP_VIA',
-            'forwarded' => 'HTTP_FORWARDED',
-            'forwarded_for' => 'HTTP_FORWARDED_FOR',
-            'x_forwarded' => 'HTTP_X_FORWARDED',
-            'x_forwarded_for' => 'HTTP_X_FORWARDED_FOR',
-            'client_ip' => 'HTTP_CLIENT_IP',
-        ];
-
         // Create the environment array:
         $aRemoteInfo = [];
         foreach ($this->serverVarsList as $xmlVar => $serverVarName) {

@@ -32,4 +32,4 @@ many improvements and breaking changes
 ## dev-master init
 - initialize repo
 - testing package
-- testing compatability
+- testing comparability

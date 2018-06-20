@@ -137,13 +137,19 @@ class CampaignInfo extends Info
      */
     var $block;
 
-
     /**
      * This field provides any additional comments to be stored.
      *
      * @var string $comments
      */
     var $comments;
+
+    /**
+     * Customized install for banner Limit, this will not harm non-customized installs
+     *
+     * @var string $bannerLimit
+     */
+    var $bannerLimit;
 
     /**
      * This function sets all default values when adding new campaign.
