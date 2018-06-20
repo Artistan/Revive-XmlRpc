@@ -29,6 +29,8 @@ extracted into a package and updated to use packages rather than pear
 
 ## Using The API
 
+[phpdoc documentation](./api.md)
+
 ### Version 2 xml
 
 these examples were tested in Laravel 5.6 Commands
@@ -114,3 +116,10 @@ $list = $rpc->getAgencyList();
         var_dump(json_decode(json_encode($list),true));
 ```
 
+#### [Documentation](https://github.com/victorjonsson/PHP-Markdown-Documentation-Generator) Updates
+
+[PHP-Markdown-Documentation-Generator](https://github.com/victorjonsson/PHP-Markdown-Documentation-Generator)
+
+```bash
+./vendor/bin/phpdoc-md generate --ignore=test,examples src > api.md
+```

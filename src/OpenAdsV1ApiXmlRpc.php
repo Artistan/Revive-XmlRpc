@@ -59,8 +59,6 @@ class OpenAdsV1ApiXmlRpc
     var $debug = '';
 
     /**
-     * PHP4 style constructor
-     *
      * @param string $host The name of the host to which to connect.
      * @param string $basepath The base path to XML-RPC services.
      * @param string $username The username to authenticate to the web services API.

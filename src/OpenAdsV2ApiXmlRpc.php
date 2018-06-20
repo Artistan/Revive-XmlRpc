@@ -62,8 +62,6 @@ class OpenAdsV2ApiXmlRpc
     var $debug = '';
 
     /**
-     * PHP4 style constructor
-     *
      * @param string|array $host_config The name of the host to which to connect. OR array of configs
      *     ['host'=>'',...]  for host, basepath, username, password and optionally port, ssl, timeout
      * @param string $basepath The base path to XML-RPC services.
