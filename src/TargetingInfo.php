@@ -34,8 +34,7 @@ class TargetingInfo extends Info
     public $type;
 
     /**
-     * String showing the operation to be applied (e.g.: '==', '!=', '>=',
-     * 'ne')
+     * String showing the operation to be applied (e.g.: '==', '!=', '>=', 'ne')
      *
      * @var string
      */
@@ -50,6 +49,7 @@ class TargetingInfo extends Info
 
     /**
      * This method returns an array of fields with their corresponding types.
+     *
      * @see \Artistan\ReviveXmlRpc\Info::getFieldsTypes()
      *
      * @access public
@@ -63,6 +63,38 @@ class TargetingInfo extends Info
             'type' => 'string',
             'comparison' => 'string',
             'data' => 'string',
+        ];
+    }
+
+    /**
+     * quick settings for channel targeting
+     *
+     * @example
+     * $targeting[] = TargetingInfo::getSettings();
+     * $targeting[] = TargetingInfo::getSettings('US','Country');
+     * $targeting[] = TargetingInfo::getSettings('KeyHere','Source','Site','==','or');
+     * $rpc->setChannelTargeting($channel_id,$targeting);
+     * /example
+     *
+     * @param string $csvFilter
+     * @param string $delivery_data
+     * @param string $delivery_type
+     * @param string $comparison
+     * @param string $logical
+     * @return array
+     */
+    public static function getSettings(
+        $csvFilter = 'EU',
+        $delivery_data = 'Continent',
+        $delivery_type = 'Geo',
+        $comparison = '=~',
+        $logical = 'and'
+    ) {
+        return [
+            'logical' => TargetingOptions::logical($logical),
+            'type' => TargetingOptions::getDeliveryType($delivery_type, $delivery_data),
+            'comparison' => TargetingOptions::comparison($comparison),// contains these
+            'data' => $csvFilter // comma separated abbreviations Geo:Continent, varies per option...
         ];
     }
 }

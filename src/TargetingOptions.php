@@ -20,6 +20,8 @@ namespace Artistan\ReviveXmlRpc;
 class TargetingOptions
 {
     /**
+     * key is the value needed for passing in request
+     *
      * @var array for logical operator option list
      */
     public static $logical = [
@@ -413,6 +415,22 @@ class TargetingOptions
     /**
      * get site type key
      *
+     * @param $type
+     * @param $data
+     * @return bool|string
+     */
+    public static function getDeliveryType($type, $data)
+    {
+        if (! empty(self::$type['deliveryLimitations:'.$type.':'.$data])) {
+            return 'deliveryLimitations:'.$type.':'.$data;
+        }
+
+        return false;
+    }
+
+    /**
+     * get site type key
+     *
      * @param $data
      * @return bool|string
      */
@@ -420,9 +438,6 @@ class TargetingOptions
     {
         if (! empty(self::$type['deliveryLimitations:Site:'.$data])) {
             return 'deliveryLimitations:Site:'.$data;
-        }
-        if ($key = array_search($data, self::$comparison)) {
-            return $key;
         }
 
         return false;
@@ -439,9 +454,6 @@ class TargetingOptions
         if (! empty(self::$type['deliveryLimitations:Client:'.$data])) {
             return 'deliveryLimitations:Client:'.$data;
         }
-        if ($key = array_search($data, self::$comparison)) {
-            return $key;
-        }
 
         return false;
     }
@@ -456,9 +468,6 @@ class TargetingOptions
     {
         if (! empty(self::$type['deliveryLimitations:Geo:'.$data])) {
             return 'deliveryLimitations:Geo:'.$data;
-        }
-        if ($key = array_search($data, self::$comparison)) {
-            return $key;
         }
 
         return false;

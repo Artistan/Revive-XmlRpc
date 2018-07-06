@@ -35,8 +35,18 @@ extracted into a package and updated to use packages rather than pear
 
 these examples were tested in Laravel 5.6 Commands
 
-##### laravel config/env 
+#### configuration
 
+loads definitions in this order
+each step will override/replace the previous step
+
+1. loads /Assets/Config/revive-xmlrpc.php (defaults)
+2. laravel style configs (if function config exists)
+3. constructor array settings (first param can be an array)
+4. constructor individual settings
+
+##### laravel config/env 
+     
 ```bash
 php artisan vendor:publish --provider=artistan/revive-xmlrpc
 ```

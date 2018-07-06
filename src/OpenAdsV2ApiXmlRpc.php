@@ -27,20 +27,64 @@ use PhpXmlRpc\Value;
  */
 class OpenAdsV2ApiXmlRpc
 {
+    /**
+     * The name of the host to which to connect. OR array of configs
+     *     ['host'=>'',...]  for host, basepath, username, password and optionally port, ssl, timeout
+     *
+     * @var array|mixed|null|string
+     */
     var $host;
 
+    /**
+     * The base path to XML-RPC services
+     *
+     * @var string
+     */
     var $basepath;
 
+    /**
+     * The port number. Use 0 to use standard ports which
+     *                          are port 80 for HTTP and port 443 for HTTPS.
+     *
+     * @var int|mixed|null
+     */
     var $port;
 
+    /**
+     * The timeout period to wait for a response.
+     *
+     * @var int|mixed|null
+     */
     var $timeout;
 
+    /**
+     * The username to authenticate to the web services API.
+     *
+     * @var mixed|null|string
+     */
     var $username;
 
+    /**
+     * The password for this connection.
+     *
+     * @var mixed|null|string
+     */
     var $password;
 
+    /**
+     * Set to true to connect using an SSL connection.
+     *
+     * @var bool|mixed|null
+     */
     var $ssl;
 
+    /**
+     * define connection configuration in files
+     *
+     * @see \Artistan\ReviveXmlRpc\OpenAdsV2ApiXmlRpc::config();
+     *
+     * @var array
+     */
     var $config = [];
 
     /**
@@ -54,23 +98,24 @@ class OpenAdsV2ApiXmlRpc
      * Purely for my own use, this parameter lets me pass debug querystring parameters into
      * the remote call to trigger my Zend debugger on the server-side
      *
-     * This will be removed before release
-     *
-     * @var string The querystring parameters required to trigger my remote debugger
+     * The querystring parameters required to trigger my remote debugger
      *             or empty for no remote debugging
+     *
+     * @var string
      */
     var $debug = '';
 
     /**
-     * @param string|array $host_config The name of the host to which to connect. OR array of configs
-     *     ['host'=>'',...]  for host, basepath, username, password and optionally port, ssl, timeout
-     * @param string $basepath The base path to XML-RPC services.
-     * @param string $username The username to authenticate to the web services API.
-     * @param string $password The password for this user.
-     * @param int $port The port number. Use 0 to use standard ports which
-     *                          are port 80 for HTTP and port 443 for HTTPS.
-     * @param bool $ssl Set to true to connect using an SSL connection.
-     * @param int $timeout The timeout period to wait for a response.
+     * pass array as first parameter to load it as the config
+     * if any parameter is not set, the config method will be used to try to use config from file
+     *
+     * @param string|array $host_config
+     * @param string $basepath
+     * @param string $username
+     * @param string $password
+     * @param int $port
+     * @param bool $ssl
+     * @param int $timeout
      */
     function __construct(
         $host_config = null,
@@ -81,10 +126,7 @@ class OpenAdsV2ApiXmlRpc
         $ssl = null,
         $timeout = null
     ) {
-        if (is_array($host_config)) {
-            $this->load_config($host_config);
-            $host_config = null;
-        }
+        $this->load_config($host_config);
         $this->host = $host_config ?? $this->config('host');
         $this->basepath = rtrim($basepath ?? $this->config('basepath'), '/');
         $this->port = $port ?? $this->config('port', 0);
@@ -95,22 +137,34 @@ class OpenAdsV2ApiXmlRpc
         $this->_logon();
     }
 
+    /**
+     * pass a configuration array to the class directory
+     *
+     * @param $config
+     */
     function load_config($config)
     {
-        $this->config = $config;
+        // get the default configs directly from the config file
+        $this->config = require __DIR__.'/Assets/Config/revive-xmlrpc.php';
+        // allow override default configs with laravel type configs from project
+        if (function_exists('config')) {
+            $this->config = array_merge($this->config, config('revive-xmlrpc'));
+        }
+        // allow the passed config array to override everything
+        if (is_array($config) && ! empty($config)) {
+            $this->config = array_merge($this->config, $config);
+        }
     }
 
+    /**
+     * get variable from config
+     *
+     * @param $key
+     * @param null $default
+     * @return mixed|null
+     */
     function config($key, $default = null)
     {
-        if (function_exists('config')) {
-            // allow laravel type loading configs from project
-            return config('revive-xmlrpc.'.$key, $default);
-        }
-        if (empty($this->config)) {
-            // get the configs directly from the config file if not set already.
-            $this->config = require __DIR__.'/Assets/Config/revive-xmlrpc.php';
-        }
-
         return $this->config[$key] ?? $default;
     }
 
@@ -1488,7 +1542,7 @@ class OpenAdsV2ApiXmlRpc
     }
 
     /**
-     * A method to unlink a campaign from a zone
+     * A method to generate tags for a zone
      *
      * @param int $zoneId
      * @param string $codeType must exist in invocationTags
