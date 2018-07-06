@@ -27,7 +27,7 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>__construct(</strong><em>string/array</em> <strong>$host_config=null</strong>, <em>string</em> <strong>$basepath=null</strong>, <em>string</em> <strong>$username=null</strong>, <em>string</em> <strong>$password=null</strong>, <em>int</em> <strong>$port=null</strong>, <em>bool</em> <strong>$ssl=null</strong>, <em>int</em> <strong>$timeout=null</strong>)</strong> : <em>void</em><br /><em>['host'=>'',...]  for host, basepath, username, password and optionally port, ssl, timeout are port 80 for HTTP and port 443 for HTTPS.</em> |
+| public | <strong>__construct(</strong><em>string/array</em> <strong>$host_config=null</strong>, <em>string</em> <strong>$basepath=null</strong>, <em>string</em> <strong>$username=null</strong>, <em>string</em> <strong>$password=null</strong>, <em>int</em> <strong>$port=null</strong>, <em>bool</em> <strong>$ssl=null</strong>, <em>int</em> <strong>$timeout=null</strong>)</strong> : <em>void</em><br /><em>pass array as first parameter to load it as the config if any parameter is not set, the config method will be used to try to use config from file</em> |
 | public | <strong>_callStatisticsMethod(</strong><em>string</em> <strong>$methodName</strong>, <em>int</em> <strong>$entityId</strong>, <em>\Carbon\Carbon</em> <strong>$oStartDate=null</strong>, <em>\Carbon\Carbon</em> <strong>$oEndDate=null</strong>, <em>bool/boolean</em> <strong>$useManagerTimezone=false</strong>)</strong> : <em>array result data</em><br /><em>This method returns statistics for an entity.</em> |
 | public | <strong>_getClient()</strong> : <em>\PhpXmlRpc\Client</em><br /><em>A private method to return an Client to the API service</em> |
 | public | <strong>_logon()</strong> : <em>boolean "Was the remote logon() call successful?"</em><br /><em>This method logs on to web services.</em> |
@@ -60,7 +60,7 @@
 | public | <strong>campaignDailyStatistics(</strong><em>int</em> <strong>$campaignId</strong>, <em>\Carbon\Carbon</em> <strong>$oStartDate=null</strong>, <em>\Carbon\Carbon</em> <strong>$oEndDate=null</strong>, <em>bool/boolean</em> <strong>$useManagerTimezone=false</strong>)</strong> : <em>array result data</em><br /><em>This method returns daily statistics for a campaign for a specified period.</em> |
 | public | <strong>campaignPublisherStatistics(</strong><em>int</em> <strong>$campaignId</strong>, <em>\Carbon\Carbon</em> <strong>$oStartDate=null</strong>, <em>\Carbon\Carbon</em> <strong>$oEndDate=null</strong>, <em>bool/boolean</em> <strong>$useManagerTimezone=false</strong>)</strong> : <em>array result data</em><br /><em>This method returns publisher statistics for a campaign for a specified period.</em> |
 | public | <strong>campaignZoneStatistics(</strong><em>int</em> <strong>$campaignId</strong>, <em>\Carbon\Carbon</em> <strong>$oStartDate=null</strong>, <em>\Carbon\Carbon</em> <strong>$oEndDate=null</strong>, <em>bool/boolean</em> <strong>$useManagerTimezone=false</strong>)</strong> : <em>array result data</em><br /><em>This method returns zone statistics for a campaign for a specified period.</em> |
-| public | <strong>config(</strong><em>mixed</em> <strong>$key</strong>, <em>mixed</em> <strong>$default=null</strong>)</strong> : <em>void</em> |
+| public | <strong>config(</strong><em>mixed</em> <strong>$key</strong>, <em>null</em> <strong>$default=null</strong>)</strong> : <em>mixed/null</em><br /><em>get variable from config</em> |
 | public | <strong>deleteAdvertiser(</strong><em>int</em> <strong>$advertiserId</strong>)</strong> : <em>mixed result</em><br /><em>This method deletes an advertiser.</em> |
 | public | <strong>deleteAgency(</strong><em>int</em> <strong>$agencyId</strong>)</strong> : <em>mixed result</em><br /><em>This method deletes a specified agency.</em> |
 | public | <strong>deleteBanner(</strong><em>int</em> <strong>$bannerId</strong>)</strong> : <em>mixed result</em><br /><em>This method deletes a banner from the banner object.</em> |
@@ -68,7 +68,7 @@
 | public | <strong>deletePublisher(</strong><em>int</em> <strong>$publisherId</strong>)</strong> : <em>mixed result</em><br /><em>This method deletes a publisher from the publisher object.</em> |
 | public | <strong>deleteUser(</strong><em>int</em> <strong>$userId</strong>)</strong> : <em>mixed result</em><br /><em>This method deletes a user from the user object.</em> |
 | public | <strong>deleteZone(</strong><em>int</em> <strong>$zoneId</strong>)</strong> : <em>mixed result</em><br /><em>This method deletes a zone from the zone object.</em> |
-| public | <strong>generateTags(</strong><em>int</em> <strong>$zoneId</strong>, <em>string</em> <strong>$codeType</strong>, <em>array</em> <strong>$aParams=null</strong>)</strong> : <em>bool</em><br /><em>A method to unlink a campaign from a zone invocationTags:oxInvocationTags:adframe invocationTags:oxInvocationTags:adjs invocationTags:oxInvocationTags:adlayer invocationTags:oxInvocationTags:adview invocationTags:oxInvocationTags:adviewnocookies invocationTags:oxInvocationTags:local invocationTags:oxInvocationTags:popup invocationTags:oxInvocationTags:xmlrpc</em> |
+| public | <strong>generateTags(</strong><em>int</em> <strong>$zoneId</strong>, <em>string</em> <strong>$codeType</strong>, <em>array</em> <strong>$aParams=null</strong>)</strong> : <em>bool</em><br /><em>A method to generate tags for a zone invocationTags:oxInvocationTags:adframe invocationTags:oxInvocationTags:adjs invocationTags:oxInvocationTags:adlayer invocationTags:oxInvocationTags:adview invocationTags:oxInvocationTags:adviewnocookies invocationTags:oxInvocationTags:local invocationTags:oxInvocationTags:popup invocationTags:oxInvocationTags:xmlrpc</em> |
 | public | <strong>getAdvertiser(</strong><em>int</em> <strong>$advertiserId</strong>)</strong> : <em>[\Artistan\ReviveXmlRpc\AdvertiserInfo](#class-artistanrevivexmlrpcadvertiserinfo)</em><br /><em>This method returns AdvertiserInfo for a specified advertiser.</em> |
 | public | <strong>getAdvertiserListByAgencyId(</strong><em>int</em> <strong>$agencyId</strong>)</strong> : <em>array array AgencyInfo objects</em><br /><em>This method returns a list of advertisers by Agency ID.</em> |
 | public | <strong>getAgency(</strong><em>int</em> <strong>$agencyId</strong>)</strong> : <em>[\Artistan\ReviveXmlRpc\AgencyInfo](#class-artistanrevivexmlrpcagencyinfo)</em><br /><em>This method  returns the AgencyInfo for a specified agency.</em> |
@@ -91,7 +91,7 @@
 | public | <strong>getZoneListByPublisherId(</strong><em>int</em> <strong>$publisherId</strong>)</strong> : <em>array array ZoneInfo objects</em><br /><em>This method returns a list of zones for a specified publisher.</em> |
 | public | <strong>linkBanner(</strong><em>int</em> <strong>$zoneId</strong>, <em>int</em> <strong>$bannerId</strong>)</strong> : <em>bool</em><br /><em>A method to link a banner to a zone</em> |
 | public | <strong>linkCampaign(</strong><em>int</em> <strong>$zoneId</strong>, <em>int</em> <strong>$campaignId</strong>)</strong> : <em>bool</em><br /><em>A method to link a campaign to a zone</em> |
-| public | <strong>load_config(</strong><em>mixed</em> <strong>$config</strong>)</strong> : <em>mixed</em> |
+| public | <strong>load_config(</strong><em>mixed</em> <strong>$config</strong>)</strong> : <em>mixed</em><br /><em>pass a configuration array to the class directory</em> |
 | public | <strong>logoff()</strong> : <em>boolean "Was the remote logoff() call successful?"</em><br /><em>This method logs off from web wervices.</em> |
 | public | <strong>modifyAdvertiser(</strong><em>[\Artistan\ReviveXmlRpc\AdvertiserInfo](#class-artistanrevivexmlrpcadvertiserinfo)</em> <strong>$oAdvertiserInfo</strong>)</strong> : <em>mixed result</em><br /><em>This method modifies an advertiser.</em> |
 | public | <strong>modifyAgency(</strong><em>[\Artistan\ReviveXmlRpc\AgencyInfo](#class-artistanrevivexmlrpcagencyinfo)</em> <strong>$oAgencyInfo</strong>)</strong> : <em>mixed result</em><br /><em>This method sends a call to the AgencyXmlRpcService and passes the AgencyInfo object with the session to modify an agency.</em> |
@@ -126,9 +126,9 @@
 | Visibility | Function |
 |:-----------|:---------|
 | public | <strong>__construct(</strong><em>array</em> <strong>$aEntityData=array()</strong>)</strong> : <em>void</em> |
-| public | <strong>getFieldType(</strong><em>mixed</em> <strong>$fieldName</strong>)</strong> : <em>mixed</em> |
-| public | <strong>abstract getFieldsTypes()</strong> : <em>array</em> |
-| public | <strong>readDataFromArray(</strong><em>mixed</em> <strong>$aEntityData</strong>)</strong> : <em>void</em> |
+| public | <strong>getFieldType(</strong><em>mixed</em> <strong>$fieldName</strong>)</strong> : <em>mixed</em><br /><em>get RPCdataType for field</em> |
+| public | <strong>abstract getFieldsTypes()</strong> : <em>array ['fieldName' +> 'RPCdataType', ...]</em><br /><em>get field type definition</em> |
+| public | <strong>readDataFromArray(</strong><em>array</em> <strong>$aEntityData</strong>)</strong> : <em>void</em><br /><em>create/build $this from array data</em> |
 | public | <strong>toArray()</strong> : <em>array</em> |
 
 <hr />
@@ -167,7 +167,7 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>getFieldsTypes()</strong> : <em>mixed</em> |
+| public | <strong>getFieldsTypes()</strong> : <em>array</em><br /><em>This method returns an array of fields with their corresponding types.</em> |
 
 *This class extends [\Artistan\ReviveXmlRpc\Info](#class-artistanrevivexmlrpcinfo-abstract)*
 
@@ -179,7 +179,7 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>getFieldsTypes()</strong> : <em>mixed</em> |
+| public | <strong>getFieldsTypes()</strong> : <em>array</em><br /><em>This method returns an array of fields with their corresponding types.</em> |
 
 *This class extends [\Artistan\ReviveXmlRpc\Info](#class-artistanrevivexmlrpcinfo-abstract)*
 
@@ -191,7 +191,7 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>getFieldsTypes()</strong> : <em>mixed</em> |
+| public | <strong>getFieldsTypes()</strong> : <em>array</em><br /><em>This method returns an array of fields with their corresponding types.</em> |
 
 *This class extends [\Artistan\ReviveXmlRpc\Info](#class-artistanrevivexmlrpcinfo-abstract)*
 
@@ -220,6 +220,7 @@
 | public static | <strong>continent(</strong><em>string</em> <strong>$data=`''`</strong>)</strong> : <em>mixed/string</em><br /><em>get continent key returns the empty value if no match</em> |
 | public static | <strong>country(</strong><em>string</em> <strong>$data=`''`</strong>)</strong> : <em>mixed/string</em><br /><em>get country key returns the empty value if no match</em> |
 | public static | <strong>geoType(</strong><em>mixed</em> <strong>$data</strong>)</strong> : <em>bool/string</em><br /><em>get geo type key</em> |
+| public static | <strong>getDeliveryType(</strong><em>mixed</em> <strong>$type</strong>, <em>mixed</em> <strong>$data</strong>)</strong> : <em>bool/string</em><br /><em>get site type key</em> |
 | public static | <strong>logical(</strong><em>string</em> <strong>$data=`''`</strong>)</strong> : <em>mixed/string</em><br /><em>get logical key returns the default value if no match</em> |
 | public static | <strong>siteType(</strong><em>mixed</em> <strong>$data</strong>)</strong> : <em>bool/string</em><br /><em>get site type key</em> |
 
@@ -231,7 +232,16 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>getFieldsTypes()</strong> : <em>mixed</em> |
+| public | <strong>getFieldsTypes()</strong> : <em>array</em><br /><em>This method returns an array of fields with their corresponding types.</em> |
+| public static | <strong>getSettings(</strong><em>string</em> <strong>$csvFilter=`'EU'`</strong>, <em>string</em> <strong>$delivery_data=`'Continent'`</strong>, <em>string</em> <strong>$delivery_type=`'Geo'`</strong>, <em>string</em> <strong>$comparison=`'=~'`</strong>, <em>string</em> <strong>$logical=`'and'`</strong>)</strong> : <em>array</em><br /><em>quick settings for channel targeting</em> |
+###### Examples of TargetingInfo::getSettings()
+```
+$targeting[] = TargetingInfo::getSettings();
+$targeting[] = TargetingInfo::getSettings('US','Country');
+$targeting[] = TargetingInfo::getSettings('KeyHere','Source','Site','==','or');
+$rpc->setChannelTargeting($channel_id,$targeting);
+/example
+```
 
 *This class extends [\Artistan\ReviveXmlRpc\Info](#class-artistanrevivexmlrpcinfo-abstract)*
 
@@ -243,7 +253,7 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>getFieldsTypes()</strong> : <em>mixed</em><br /><em>This method sets all default values when adding a new channel.</em> |
+| public | <strong>getFieldsTypes()</strong> : <em>array</em><br /><em>This method returns an array of fields with their corresponding types.</em> |
 
 *This class extends [\Artistan\ReviveXmlRpc\Info](#class-artistanrevivexmlrpcinfo-abstract)*
 
@@ -255,7 +265,7 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>getFieldsTypes()</strong> : <em>mixed</em> |
+| public | <strong>getFieldsTypes()</strong> : <em>array</em><br /><em>This method returns an array of fields with their corresponding types.</em> |
 
 *This class extends [\Artistan\ReviveXmlRpc\Info](#class-artistanrevivexmlrpcinfo-abstract)*
 
@@ -280,7 +290,7 @@
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>getFieldsTypes()</strong> : <em>mixed</em> |
+| public | <strong>getFieldsTypes()</strong> : <em>array</em><br /><em>This method returns an array of fields with their corresponding types.</em> |
 
 *This class extends [\Artistan\ReviveXmlRpc\Info](#class-artistanrevivexmlrpcinfo-abstract)*
 
@@ -288,11 +298,11 @@
 
 ### Class: \Artistan\ReviveXmlRpc\AdvertiserInfo
 
-> The AdvertiserInfo class extends the base Info class and contains information about advertisers.
+> The AdvertiserInfo class extends the base Info class and contains information about advertisers. Advertiser is the
 
 | Visibility | Function |
 |:-----------|:---------|
-| public | <strong>getFieldsTypes()</strong> : <em>mixed</em> |
+| public | <strong>getFieldsTypes()</strong> : <em>array</em><br /><em>This method returns an array of fields with their corresponding types.</em> |
 
 *This class extends [\Artistan\ReviveXmlRpc\Info](#class-artistanrevivexmlrpcinfo-abstract)*
 
