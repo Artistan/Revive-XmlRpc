@@ -1363,6 +1363,17 @@ class OpenAdsV2ApiXmlRpc
     }
 
     /**
+     * This method deletes a Channel from the channel object.
+     *
+     * @param int $channelId
+     * @return mixed result
+     */
+    function deleteChannel($channelId)
+    {
+        return (bool)$this->_sendWithSession('ox.deleteChannel', [(int)$channelId]);
+    }
+
+    /**
      * This method returns a list of channels by Website ID.
      *
      * @param int $websiteId
