@@ -1189,6 +1189,24 @@ class OpenAdsV2ApiXmlRpc
     }
 
     /**
+     * This method links a user to an advertiser account.
+     *
+     * @param int $userId
+     * @param int $accountId
+     * @param array $aPermissions array of permissions to set eg: array(OA_PERM_SUPER_ACCOUNT, OA_PERM_BANNER_EDIT)
+     * @return bool
+     */
+    public function linkUserToAdvertiserAccount($userId, $accountId, $aPermissions = [])
+    {
+        $data = [(int)$userId, (int)$accountId];
+        if ($aPermissions) {
+            $data[] = $aPermissions;
+        }
+
+        return (bool)$this->_sendWithSession('ox.linkUserToAdvertiserAccount', $data);
+    }
+
+    /**
      * This method adds a zone to the zone object.
      *
      * @param ZoneInfo $oZoneInfo
