@@ -719,7 +719,7 @@ class OpenAdsV1ApiXmlRpc
      *
      * @param int $campaignId
      *
-     * @return array  array CampaignInfo objects
+     * @return array  array BannerInfo objects
      */
     function getBannerListByCampaignId($campaignId)
     {
@@ -1136,27 +1136,63 @@ class OpenAdsV1ApiXmlRpc
             $oEndDate);
     }
 
+    /**
+     * This method links a banner to a zone.
+     *
+     * @param int $zoneId
+     * @param int $bannerId
+     * @return  boolean result
+     */
     function linkBanner($zoneId, $bannerId)
     {
         return (bool)$this->_sendWithSession('ZoneXmlRpcService.php', 'linkBanner', [(int)$zoneId, (int)$bannerId]);
     }
 
+    /**
+     * This method links a campaign to a zone.
+     *
+     * @param int $zoneId
+     * @param int $campaignId
+     * @return  boolean result
+     */
     function linkCampaign($zoneId, $campaignId)
     {
         return (bool)$this->_sendWithSession('ZoneXmlRpcService.php', 'linkCampaign', [(int)$zoneId, (int)$campaignId]);
     }
 
+    /**
+     * This method unlinks a banner from a zone.
+     *
+     * @param int $zoneId
+     * @param int $bannerId
+     * @return  boolean result
+     */
     function unlinkBanner($zoneId, $bannerId)
     {
         return (bool)$this->_sendWithSession('ZoneXmlRpcService.php', 'unlinkBanner', [(int)$zoneId, (int)$bannerId]);
     }
 
+    /**
+     * This method unlinks a campaign from a zone.
+     *
+     * @param int $zoneId
+     * @param int $campaignId
+     * @return  boolean result
+     */
     function unlinkCampaign($zoneId, $campaignId)
     {
         return (bool)$this->_sendWithSession('ZoneXmlRpcService.php', 'unlinkCampaign',
             [(int)$zoneId, (int)$campaignId]);
     }
 
+    /**
+     * This method unlinks a campaign from a zone.
+     *
+     * @param int $zoneId
+     * @param string $codeType
+     * @param array|null $aParams
+     * @return  boolean result
+     */
     function generateTags($zoneId, $codeType, $aParams = null)
     {
         if (! isset($aParams)) {
